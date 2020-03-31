@@ -156,11 +156,35 @@ If you found this work or code useful, please cite us:
 In case of feedback, suggestions, or issues, please contact [Tribhuvanesh Orekondy](https://tribhuvanesh.github.io/)
 
 
-(base) C:\Users\asus\Desktop\Hack>cd C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\
+cd C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\
 
 (base) C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\knockoff>set PYTHONPATH=%PYTHONPATH%;C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\
 
+export PATH=$PATH:/Users/splashingsplahses/Documents/Github/knockoffnets-master/knockoff
+export PYTHONPATH="${PYTHONPATH}:/Users/splashingsplahses/Documents/Github/knockoffnets-master"
+
 (base) C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\knockoff>python C:\Users\asus\Desktop\Hack\knockoffnets-master\knockoffnets-master\knockoff\adversary\jacobian_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34-jacobian --budget 1 resnet34 --algo jsma Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet
+
+#conda env
+conda activate knockoff
+
+#cd
+cd /Users/splashingsplahses/Documents/Github/knockoffnets-master
+
+#set path
+export PYTHONPATH="${PYTHONPATH}:/Users/splashingsplahses/Documents/Github/knockoffnets-master"
+
+#generate jacobian
+python ./knockoff/adversary/jacobian_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34 --budget 1 resnet34 --algo fgsm --eps 0.5 Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet
+
+#generate adaptive
+python ./knockoff/adversary/adaptive_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34 --budget 1 resnet34 Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet
+
+#train jacobian
+python ./knockoff/adversary/jacobian_train.py models/adversary/caltech256-resnet34 resnet34 Caltech256 --budgets 1 --algo fgsm --eps 0.5 -d -1 --pretrained imagenet --log-interval 1000 --epochs 20 --lr 0.1
+
+
+
 
 
 target class: targeted adversarial example generation (could it be any direction? -> may decrease query efficiency)

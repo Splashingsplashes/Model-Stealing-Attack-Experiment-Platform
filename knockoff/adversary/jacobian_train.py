@@ -20,55 +20,12 @@ import knockoff.config as cfg
 import knockoff.utils.model as model_utils
 from knockoff import datasets
 import knockoff.models.zoo as zoo
+from knockoff.adversary.train import TransferSetImagePaths, TransferSetImages
 
 __author__ = "Tribhuvanesh Orekondy"
 __maintainer__ = "Tribhuvanesh Orekondy"
 __email__ = "orekondy@mpi-inf.mpg.de"
 __status__ = "Development"
-
-
-class TransferSetImagePaths(ImageFolder):
-    """TransferSet Dataset, for when images are stored as *paths*"""
-
-    def __init__(self, samples, transform=None, target_transform=None):
-        self.loader = default_loader
-        self.extensions = IMG_EXTENSIONS
-        self.samples = samples
-        self.targets = [s[1] for s in samples]
-        self.transform = transform
-        self.target_transform = target_transform
-
-
-class TransferSetImages(Dataset):
-    def __init__(self, samples, transform=None, target_transform=None):
-        self.samples = samples
-        self.transform = transform
-        self.target_transform = target_transform
-
-        self.data = [self.samples[i][0] for i in range(len(self.samples))]
-        self.targets = [self.samples[i][1] for i in range(len(self.samples))]
-
-    def __getitem__(self, index):
-        img, target = self.data[index], self.targets[index]
-
-        # doing this so that it is consistent with all other datasets
-        # to return a PIL Image
-        # code.interact(local=dict(globals(), **locals()))
-        # img = img[0]
-        # img = np.transpose(img)
-        img = img.astype(np.uint8)
-        img = Image.fromarray(img)
-
-        if self.transform is not None:
-            img = self.transform(img)
-
-        if self.target_transform is not None:
-            target = self.target_transform(target)
-
-        return img, target
-
-    def __len__(self):
-        return len(self.data)
 
 
 def samples_to_transferset(samples, budget=None, transform=None, target_transform=None):
@@ -102,14 +59,15 @@ def get_optimizer(parameters, optimizer_type, lr=0.01, momentum=0.5, **kwargs):
 def main():
     parser = argparse.ArgumentParser(description='Train a model')
     # Required arguments
-    parser.add_argument('policy', metavar='PI', type=str, help='Policy to use while training',
-                        choices=['random', 'adaptive', 'jacobian'])
     parser.add_argument('model_dir', metavar='DIR', type=str, help='Directory containing transferset.pickle')
     parser.add_argument('model_arch', metavar='MODEL_ARCH', type=str, help='Model name')
     parser.add_argument('testdataset', metavar='DS_NAME', type=str, help='Name of test')
     parser.add_argument('--budgets', metavar='B', type=str,
                         help='Comma separated values of budgets. Knockoffs will be trained for each budget.')
     # Optional arguments
+    parser.add_argument('--algo', metavar='ALGO', type=str, help='adversarial algorithm used to alter inputs' )
+    parser.add_argument('--eps', metavar='e', type=float, help="epsilon for adversarial sample crafting", default = 0.5)
+
     parser.add_argument('-d', '--device_id', metavar='D', type=int, help='Device id. -1 for CPU.', default=0)
     parser.add_argument('-b', '--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
@@ -132,7 +90,8 @@ def main():
     parser.add_argument('--weighted-loss', action='store_true', help='Use a weighted loss', default=False)
     # Attacker's defense
     parser.add_argument('--argmaxed', action='store_true', help='Only consider argmax labels', default=False)
-    parser.add_argument('--optimizer_choice', type=str, help='Optimizer', default='sgdm', choices=('sgd', 'sgdm', 'adam', 'adagrad'))
+    parser.add_argument('--optimizer_choice', type=str, help='Optimizer', default='sgdm',
+                        choices=('sgd', 'sgdm', 'adam', 'adagrad'))
     args = parser.parse_args()
     params = vars(args)
 
@@ -143,10 +102,12 @@ def main():
     else:
         device = torch.device('cpu')
 
-    model_dir = params['model_dir']+"-"+params["policy"]
+    model_dir = params['model_dir']
 
     # ----------- Set up transferset
-    transferset_path = osp.join(model_dir, 'transferset.pickle')
+    algo = params['algo']
+    eps = params['eps']
+    transferset_path = osp.join(model_dir+"-jacobian", 'eps='+str(eps)+'&algo='+algo+'-transferset.pickle')
     with open(transferset_path, 'rb') as rf:
         transferset_samples = pickle.load(rf)
     num_classes = transferset_samples[0][1].size(0)
@@ -175,7 +136,6 @@ def main():
     testset = dataset(train=False, transform=transform)
     if len(testset.classes) != num_classes:
         raise ValueError('# Transfer classes ({}) != # Testset classes ({})'.format(num_classes, len(testset.classes)))
-
 
     # ----------- Set up model
     model_name = params['model_arch']

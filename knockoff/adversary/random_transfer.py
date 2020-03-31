@@ -143,7 +143,7 @@ def main():
 
     # ----------- Initialize adversary
     batch_size = params['batch_size']
-    transfer_out_path = osp.join(out_path, 'transferset.pickle')
+    transfer_out_path = osp.join(out_path+'-random', 'transferset.pickle')
 
     adversary = RandomAdversary(blackbox, queryset, batch_size=batch_size)
 

@@ -35,13 +35,13 @@ __status__ = "Development"
 
 
 class JacobianAdversary(object):
-    def __init__(self, queryset, blackbox, model, algo, reward = 'all'):
+    def __init__(self, queryset, blackbox, model, algo, eps, reward = 'all'):
         self.blackbox = blackbox
         self.queryset = queryset
         # self.n_queryset = len(self.queryset)
         # self.batch_size = batch_size
         # self.idx_set = set()
-
+        self.eps = eps
         self.num_classes = len(set(self.queryset.targets))
         self.num_actions = len(set(self.queryset.targets))
 
@@ -107,12 +107,13 @@ class JacobianAdversary(object):
                 """Query the victim classifier"""
                 """to cuda"""
                 # sampled_x = sampled_x.to('cuda')
-                y_output = self.blackbox(sampled_x)[0].detach().numpy()
-                print("max prob: " + str(max(y_output)))
-                print("ave prob: " + str(np.average(y_output)))
-                print("variance: " + str(np.var(y_output)))
-                print("difference: " + str(max(y_output)-np.average(y_output)))
+                # y_output = self.blackbox(sampled_x)
+                # self.printStats(y_output, action)
 
+                """Query the adversarial model"""
+                self.model.eval()
+                y_output = self.model(sampled_x)
+                self.printStats(y_output,action)
 
 
                 """generate adversarial sample"""
@@ -120,21 +121,14 @@ class JacobianAdversary(object):
                     # modification needed: target class != action
                     jacobian_input = jacobian.jsma(self.blackbox, sampled_x, action)
                 elif self.algo == 'fgsm':
-                    jacobian_input = jacobian.fgsm(sampled_x, np.random.randint(256), self.blackbox, criterion,0.1)
+                    jacobian_input = jacobian.fgsm(sampled_x, np.random.randint(256), self.blackbox, criterion, self.eps)
                 else:
                     raise NotImplementedError
 
                 jacobian_output = self.blackbox(jacobian_input)
 
-                jacobian_output1 = jacobian_output[0].detach().numpy()
+                self.printStats(jacobian_output, action)
 
-                jacobian_output2 = np.argsort(jacobian_output2)
-                jacobian_output2 =
-                print("----------------------------------------")
-                print("max prob: " + str(max(jacobian_output1)))
-                print("ave prob: " + str(np.average(jacobian_output1)))
-                print("variance: " + str(np.var(jacobian_output1)))
-                print("difference: " + str(max(jacobian_output1)-np.average(jacobian_output1)))
 
 
                 """Train the thieved classifier"""
@@ -165,17 +159,21 @@ class JacobianAdversary(object):
                 aux_exp = np.exp(h_func)
                 probs = aux_exp / np.sum(aux_exp)
                 pbar.update()
+                code.interact(local=dict(globals(), **locals()))
+
+                generated_sample = jacobian_input.detach().numpy()[0]
+                generated_sample = np.rollaxis(generated_sample, 0, 3)
 
                 """prepare transferset"""
-                selected_x.append((jacobian_input.detach().numpy(), jacobian_output.cpu().squeeze()))
-
+                selected_x.append((generated_sample, jacobian_output.cpu().squeeze().detach()))
+                code.interact(local=dict(globals(), **locals()))
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
 
             #
             # return thieved_classifier
-        print(probs)
-        # code.interact(local=dict(globals(), **locals()))
+        # print(probs)
+
         return selected_x
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
@@ -281,8 +279,24 @@ class JacobianAdversary(object):
 
         return np.sum(reward)
 
+    def printStats(self, output, label):
+        _, pred_class = torch.max(output, 1)
 
+        if hasattr(output, "grad"):
+            output = output[0].detach().numpy()
+        elif not isinstance(output, np.ndarray):
+            output = output[0].numpy()
 
+        top5 = [output[idx] for idx in np.argsort(output)[-5:][::1]]
+
+        print()
+        print("max prob: " + str(max(output)))
+        print("ave prob: " + str(np.average(output)))
+        print("variance: " + str(np.var(top5)))
+        print("difference: " + str(max(output) - np.average(output)))
+        print("original class:" + str(label))
+        print("predicted class:" + str(pred_class))
+        print("=============================")
 def main():
     parser = argparse.ArgumentParser(description='Construct apaptive transfer set')
     parser.add_argument('victim_model_dir', metavar='PATH', type=str,
@@ -293,6 +307,8 @@ def main():
                         required=True)
     parser.add_argument('model_arch', metavar='MODEL_ARCH', type=str, help='Model name')
     parser.add_argument('--algo', metavar='ALGO', type=str, help='adversarial algorithm used to alter inputs' )
+    parser.add_argument('--eps', metavar='e', type=float, help="epsilon for adversarial sample crafting", default = 0.5)
+
     parser.add_argument('testdataset', metavar='DS_NAME', type=str, help='Name of test')
     parser.add_argument('--queryset', metavar='TYPE', type=str, help='Adversary\'s dataset (P_A(X))', required=True)
     parser.add_argument('--batch_size', metavar='TYPE', type=int, help='Batch size of queries', default=8)
@@ -310,9 +326,8 @@ def main():
     args = parser.parse_args()
     params = vars(args)
 
-    out_path = params['out_dir']
+    out_path = params['out_dir']+"-jacobian"
     knockoff_utils.create_dir(out_path)
-    transfer_out_path = osp.join(out_path, 'transferset.pickle')
 
     torch.manual_seed(cfg.DEFAULT_SEED)
     if params['device_id'] >= 0:
@@ -345,11 +360,13 @@ def main():
     model = model.to(device)
 
     algo = params['algo']
-
-    adversary = JacobianAdversary(queryset, blackbox, model, algo, reward = 'all')
+    eps = params['eps']
+    adversary = JacobianAdversary(queryset, blackbox, model, algo, eps, reward = 'all')
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])
+
+    transfer_out_path = osp.join(out_path, 'eps='+str(eps)+'&algo='+algo+'-transferset.pickle')
     with open(transfer_out_path, 'wb') as wf:
         pickle.dump(transferset, wf)
     print('=> transfer set ({} samples) written to: {}'.format(len(transferset), transfer_out_path))

@@ -124,7 +124,7 @@ class AdaptiveAdversary(object):
 
 
                 # Compute rewards
-                reward = self._reward(y_output, y_hat, iterate)
+                reward = self._reward(y_output.detach(), y_hat, iterate)
                 avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
 
                 # Update learning rate
@@ -285,7 +285,7 @@ def main():
 
     out_path = params['out_dir']
     knockoff_utils.create_dir(out_path)
-    transfer_out_path = osp.join(out_path, 'transferset.pickle')
+    transfer_out_path = osp.join(out_path+"-adaptive", 'transferset.pickle')
 
     torch.manual_seed(cfg.DEFAULT_SEED)
     if params['device_id'] >= 0:
