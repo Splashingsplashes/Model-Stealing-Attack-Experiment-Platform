@@ -119,7 +119,7 @@ class AdaptiveAdversary(object):
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 code.interact(local=dict(globals(), **locals()))
-                selected_x.append((sampled_x, y_output.cpu().squeeze()))
+                selected_x.append((sampled_x.detach(), y_output.cpu().squeeze().detach()))
                 pathCollection.append((path[0], y_output.cpu().squeeze()))
 
 
@@ -284,7 +284,7 @@ def main():
     params = vars(args)
 
     out_path = params['out_dir']
-    knockoff_utils.create_dir(out_path)
+    knockoff_utils.create_dir(out_path+"-adaptive")
     transfer_out_path = osp.join(out_path+"-adaptive", 'transferset.pickle')
 
     torch.manual_seed(cfg.DEFAULT_SEED)
@@ -321,6 +321,8 @@ def main():
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])
+
+
     with open(transfer_out_path, 'wb') as wf:
         pickle.dump(transferset, wf)
     print('=> transfer set ({} samples) written to: {}'.format(len(transferset), transfer_out_path))
