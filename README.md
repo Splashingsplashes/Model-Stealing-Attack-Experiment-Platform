@@ -21,7 +21,7 @@ $ pip install -r requirements.txt       # pip
 1. Create a data/ directory
 2. Download Caltech256 dataset into this directory
    * Caltech256 ([Link](http://www.vision.caltech.edu/Image_Datasets/Caltech256/). Images in `data/256_ObjectCategories/<classname>/*.jpg`)
-3. Create a models/victim/caktech-256/ directory
+3. Create a models/victim/caltech-256/ directory
 4. Download victim model into this directory
    * [Caltech256](https://datasets.d2.mpi-inf.mpg.de/orekondy19cvpr/victim_models/caltech256-resnet34.zip) (Accuracy = 78.4%)
 5. Set path (might need to set path each time the terminal is restarted)
