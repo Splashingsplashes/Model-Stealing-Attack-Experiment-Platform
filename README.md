@@ -30,8 +30,8 @@ export PYTHONPATH="${PYTHONPATH}:[path to the directory]"
 ```
 
 ### Synthetic samples
-# -d = -1 for running on CPU based environment
-# -d >= 0 for GPU based environment
+* -d = -1 for running on CPU based environment
+* -d >= 0 for GPU based environment
 
 1. Adaptively generate samples
 
