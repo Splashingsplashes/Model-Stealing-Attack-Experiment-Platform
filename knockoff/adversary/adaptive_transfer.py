@@ -34,9 +34,10 @@ __status__ = "Development"
 
 
 class AdaptiveAdversary(object):
-    def __init__(self, queryset, blackbox, model, reward = 'all'):
+    def __init__(self, queryset, blackbox, model, device, reward = 'all'):
         self.blackbox = blackbox
         self.queryset = queryset
+        self.device = device
         # self.n_queryset = len(self.queryset)
         # self.batch_size = batch_size
         # self.idx_set = set()
@@ -86,20 +87,19 @@ class AdaptiveAdversary(object):
                 action = np.random.choice(np.arange(0, self.num_actions), p=probs)
                 actionListSelected.append(action)
                 # Sample data to attack
-                # code.interact(local=dict(globals(), **locals()))
                 sampled_x, path = self._sample_data(self.queryset, action)
-                code.interact(local=dict(globals(), **locals()))
+
 
                 # Query the victim classifier
                 """to cuda"""
-                # sampled_x = sampled_x.to('cuda')
+                sampled_x = sampled_x.to(self.device)
                 y_output = self.blackbox(sampled_x)
                 # code.interact(local=dict(globals(), **locals()))
 
                 # fake_label = np.argmax(y_output, axis=1)
                 # fake_label = to_categorical(labels=fake_label, nb_classes=self.classifier.nb_classes())
 
-                queried_labels.append(y_output)
+                queried_labels.append(y_output.cpu())
 
                 # Train the thieved classifier
                 """to cuda"""
@@ -118,13 +118,12 @@ class AdaptiveAdversary(object):
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
-                code.interact(local=dict(globals(), **locals()))
-                selected_x.append((sampled_x.detach(), y_output.cpu().squeeze().detach()))
+                selected_x.append((sampled_x.cpu().detach(), y_output.cpu().squeeze().detach()))
                 pathCollection.append((path[0], y_output.cpu().squeeze()))
 
 
                 # Compute rewards
-                reward = self._reward(y_output.detach(), y_hat, iterate)
+                reward = self._reward(y_output.detach(), y_hat.cpu(), iterate)
                 avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
 
                 # Update learning rate
@@ -317,7 +316,7 @@ def main():
     model = zoo.get_net(model_name, modelfamily, pretrained, num_classes=num_classes)
     model = model.to(device)
 
-    adversary = AdaptiveAdversary(queryset, blackbox, model, reward = 'all')
+    adversary = AdaptiveAdversary(queryset, blackbox, model, device, reward = 'all')
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])

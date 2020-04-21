@@ -35,9 +35,10 @@ __status__ = "Development"
 
 
 class JacobianAdversary(object):
-    def __init__(self, queryset, blackbox, model, algo, eps, reward = 'all'):
+    def __init__(self, queryset, blackbox, model, algo, eps, device, reward = 'all'):
         self.blackbox = blackbox
         self.queryset = queryset
+        self.device = device
         # self.n_queryset = len(self.queryset)
         # self.batch_size = batch_size
         # self.idx_set = set()
@@ -95,20 +96,13 @@ class JacobianAdversary(object):
 
                 # """prepare inputs to MxNx3"""
                 # sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
-                sampled_x = torch.tensor(sampled_x)
+                sampled_x = torch.tensor(sampled_x).to(self.device)
 
                 """prepare one hot encoding target tensor input"""
                 target = np.zeros(256)
                 target[action-1] = 1
                 # make target batch size = 1 by encapsulate it with a list
-                target = torch.tensor([target])
-
-
-                """Query the victim classifier"""
-                """to cuda"""
-                # sampled_x = sampled_x.to('cuda')
-                # y_output = self.blackbox(sampled_x)
-                # self.printStats(y_output, action)
+                target = torch.tensor([target]).to(self.device)
 
                 """Query the adversarial model"""
                 self.model.eval()
@@ -119,9 +113,9 @@ class JacobianAdversary(object):
                 """generate adversarial sample"""
                 if self.algo == 'jsma':
                     # modification needed: target class != action
-                    jacobian_input = jacobian.jsma(self.blackbox, sampled_x, action)
+                    jacobian_input = jacobian.jsma(self.blackbox, sampled_x, action).to(self.device)
                 elif self.algo == 'fgsm':
-                    jacobian_input = jacobian.fgsm(sampled_x, np.random.randint(256), self.blackbox, criterion, self.eps)
+                    jacobian_input = jacobian.fgsm(sampled_x, np.random.randint(256), self.blackbox, criterion, self.eps).to(self.device)
                 else:
                     raise NotImplementedError
 
@@ -161,7 +155,7 @@ class JacobianAdversary(object):
                 pbar.update()
                 code.interact(local=dict(globals(), **locals()))
 
-                generated_sample = jacobian_input.detach().numpy()[0]
+                generated_sample = jacobian_input.detach().cpu().numpy()[0]
                 generated_sample = np.rollaxis(generated_sample, 0, 3)
 
                 """prepare transferset"""
@@ -281,6 +275,7 @@ class JacobianAdversary(object):
 
     def printStats(self, output, label):
         _, pred_class = torch.max(output, 1)
+        output = output.cpu()
 
         if hasattr(output, "grad"):
             output = output[0].detach().numpy()
@@ -361,7 +356,7 @@ def main():
 
     algo = params['algo']
     eps = params['eps']
-    adversary = JacobianAdversary(queryset, blackbox, model, algo, eps, reward = 'all')
+    adversary = JacobianAdversary(queryset, blackbox, model, algo, eps, device, reward = 'all')
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])
