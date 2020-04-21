@@ -65,7 +65,7 @@ def main():
     parser.add_argument('--budgets', metavar='B', type=str,
                         help='Comma separated values of budgets. Knockoffs will be trained for each budget.')
     # Optional arguments
-    parser.add_argument('--algo', metavar='ALGO', type=str, help='adversarial algorithm used to alter inputs' )
+    parser.add_argument('--algo', metavar='ALGO', type=str, help='adversarial algorithm used to alter inputs. fgsm or jsma' )
     parser.add_argument('--eps', metavar='e', type=float, help="epsilon for adversarial sample crafting", default = 0.5)
 
     parser.add_argument('-d', '--device_id', metavar='D', type=int, help='Device id. -1 for CPU.', default=0)
@@ -168,7 +168,7 @@ def main():
 
     # Store arguments
     params['created_on'] = str(datetime.now())
-    params_out_path = osp.join(model_dir, 'params_train.json')
+    params_out_path = osp.join(model_dir, 'eps='+str(eps)+'&algo='+algo+'params_train.json')
     with open(params_out_path, 'w') as jf:
         json.dump(params, jf, indent=True)
 

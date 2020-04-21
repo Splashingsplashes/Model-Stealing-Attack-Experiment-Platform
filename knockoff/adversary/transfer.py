@@ -94,8 +94,6 @@ class RandomAdversary(object):
 
 def main():
     parser = argparse.ArgumentParser(description='Construct transfer set')
-    parser.add_argument('policy', metavar='PI', type=str, help='Policy to use while training',
-                        choices=['random', 'adaptive'])
     parser.add_argument('victim_model_dir', metavar='PATH', type=str,
                         help='Path to victim model. Should contain files "model_best.pth.tar" and "params.json"')
     parser.add_argument('--out_dir', metavar='PATH', type=str,
@@ -150,17 +148,7 @@ def main():
     batch_size = params['batch_size']
     nworkers = params['nworkers']
     transfer_out_path = osp.join(out_path, 'transferset.pickle')
-    if params['policy'] == 'random':
-        adversary = RandomAdversary(blackbox, queryset, batch_size=batch_size)
-    elif params['policy'] == 'adaptive':
-        # ----------- Set up model
-        model_name = params['model_arch']
-        knockoffmodel = zoo.get_net(model_name, modelfamily)
-        # model = model.to(device)
-
-        adversary = adaptive_transfer.AdaptiveAdversary(blackbox, queryset, out_path, knockoffmodel, reward = all, batch_size=batch_size)
-    else:
-        raise ValueError("Unrecognized policy")
+    adversary = RandomAdversary(blackbox, queryset, batch_size=batch_size)
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])
