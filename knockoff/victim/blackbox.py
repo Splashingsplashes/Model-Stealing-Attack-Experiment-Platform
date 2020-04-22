@@ -6,7 +6,7 @@ import argparse
 import os.path as osp
 import os
 import json
-
+import code
 import numpy as np
 
 from tqdm import tqdm
@@ -29,12 +29,13 @@ __status__ = "Development"
 
 
 class Blackbox(object):
-    def __init__(self, model, device=None, output_type='probs', topk=None, rounding=None):
+    def __init__(self, model, device=None, output_type='probs', topk = None, rounding=None, defense=None):
         self.device = torch.device('cuda') if device is None else device
         self.output_type = output_type
+
+        self.defense = defense
         self.topk = topk
         self.rounding = rounding
-
         self.model = model.to(device)
         self.output_type = output_type
         self.model.eval()
@@ -89,6 +90,19 @@ class Blackbox(object):
         if self.rounding is not None:
             y_t_probs = torch.Tensor(np.round(y_t_probs.numpy(), decimals=self.rounding))
 
+        if self.defense == 'flatten':
+            topk_vals, indices = torch.topk(y_t_probs, 5)
+            code.interact(local=dict(globals(), **locals()))
+            topk_vals = topk_vals.cpu().numpy()
+            avg = sum(topk_vals)/5
+            y_t_probs[indices[0]] = avg + 0.000001
+            y_t_probs[indices[1]] = avg + 0.0000005
+            y_t_probs[indices[2]] = avg
+            y_t_probs[indices[3]] = avg - 0.0000005
+            y_t_probs[indices[4]] = avg - 0.000001
+            code.interact(local=dict(globals(), **locals()))
+            # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
+
         return y_t_probs
 
     def __call__(self, query_input):
@@ -106,6 +120,7 @@ class Blackbox(object):
         self.__call_count += query_input.shape[0]
 
         query_output_probs = F.softmax(query_output, dim=1).cpu()
-
         query_output_probs = self.truncate_output(query_output_probs)
+
+
         return query_output_probs

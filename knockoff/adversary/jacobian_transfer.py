@@ -318,6 +318,10 @@ def main():
     # ----------- Other params
     parser.add_argument('-d', '--device_id', metavar='D', type=int, help='Device id', default=0)
     parser.add_argument('--pretrained', type=str, help='Use pretrained network', default=None)
+    parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
+    parser.add_argument('--topk', type=int, help='The top k number of probabilities to retain', default=None)
+
+
     args = parser.parse_args()
     params = vars(args)
 
@@ -345,7 +349,8 @@ def main():
     # code.interact(local=dict(globals(), **locals()))
     # ----------- Initialize blackbox
     blackbox_dir = params['victim_model_dir']
-    blackbox = Blackbox.from_modeldir(blackbox_dir, device)
+    defense = params['--defense']
+    blackbox = Blackbox.from_modeldir(blackbox_dir, device, defense)
 
     # ----------- Initialize Knockoff Nets
     model_name = params['model_arch']
