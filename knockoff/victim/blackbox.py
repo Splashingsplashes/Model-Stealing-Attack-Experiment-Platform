@@ -98,7 +98,8 @@ class Blackbox(object):
             # code.interact(local=dict(globals(), **locals()))
             new = y_t_probs.clone()
             values = [avg+diff,avg+diff/2,avg,avg-diff/2,avg-diff]
-            new = new.scatter(1,[indices,values])
+            code.interact(local=dict(globals(), **locals()))
+            new = new.scatter(1,indices,[values])
             code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
 
