@@ -376,8 +376,10 @@ def main():
 
     print('=> constructing transfer set...')
     transferset = adversary.get_transferset(params['budget'])
-
-    transfer_out_path = osp.join(out_path, algo+'-'+defense+'-transferset.pickle')
+    if defense:
+        transfer_out_path = osp.join(out_path, algo+'-'+defense+'-transferset.pickle')
+    else:
+        transfer_out_path = osp.join(out_path, algo + '-transferset.pickle')
     with open(transfer_out_path, 'wb') as wf:
         pickle.dump(transferset, wf)
     print('=> transfer set ({} samples) written to: {}'.format(len(transferset), transfer_out_path))

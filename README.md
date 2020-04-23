@@ -41,7 +41,7 @@ $ python knockoff/adversary/daptive_transfer.py models/victim/VIC_DIR \
         model_arch testdataset --queryset QUERY_SET --batch_size 8 -d DEV_ID (-1 for cpu) --pretrained imagenet
 
 ```bash
-python ./knockoff/adversary/adaptive_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34 --budget 1000 resnet34 Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet
+python ./knockoff/adversary/adaptive_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34 --budget 1000 resnet34 Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet 
 ```
 
 2. Generate random samples
@@ -64,6 +64,13 @@ $ python knockoff/adversary/transfer.py models/victim/VIC_DIR \
 ```bash
 python ./knockoff/adversary/jacobian_transfer.py models/victim/caltech256-resnet34 --out_dir models/adversary/caltech256-resnet34 --budget 1000 resnet34 --algo fgsm --eps 0.5 Caltech256 --queryset Caltech256 --batch_size 8 -d -1 --pretrained imagenet
 ```
+
+# to change the confidence values returned by the blackbox, add --defense DEFENSE 
+# DEFENSE = [flatten, fix]
+# flatten: classes with top 5 confidence values will have their probabilities averaged out
+# fix: classes with top 5 confidence values will have their probabilities fixed in a ratio of 0.8 : 0.1 : 0.05 : 0.035 : 0.015.
+
+
 
 ### Train Symthetic Samples
 1. Train adaptively generated samples
