@@ -290,14 +290,14 @@ class JacobianAdversary(object):
 
         top5 = [output[idx] for idx in np.argsort(output)[-5:][::1]]
 
-        print()
-        print("max prob: " + str(max(output)))
-        print("ave prob: " + str(np.average(output)))
-        print("variance: " + str(np.var(top5)))
-        print("difference: " + str(max(output) - np.average(output)))
-        print("original class:" + str(label))
-        print("predicted class:" + str(pred_class))
-        print("=============================")
+        # print()
+        # print("max prob: " + str(max(output)))
+        # print("ave prob: " + str(np.average(output)))
+        # print("variance: " + str(np.var(top5)))
+        # print("difference: " + str(max(output) - np.average(output)))
+        # print("original class:" + str(label))
+        # print("predicted class:" + str(pred_class))
+        # print("=============================")
 
         return np.var(top5)
 
