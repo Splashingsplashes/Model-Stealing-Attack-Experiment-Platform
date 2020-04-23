@@ -349,7 +349,7 @@ def main():
     # code.interact(local=dict(globals(), **locals()))
     # ----------- Initialize blackbox
     blackbox_dir = params['victim_model_dir']
-    defense = params['--defense']
+    defense = params['defense']
     blackbox = Blackbox.from_modeldir(blackbox_dir, device, defense)
 
     # ----------- Initialize Knockoff Nets
