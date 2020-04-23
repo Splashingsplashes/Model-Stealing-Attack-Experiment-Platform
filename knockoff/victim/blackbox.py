@@ -101,7 +101,7 @@ class Blackbox(object):
             new[0][indices[0][2]] = avg
             new[0][indices[0][3]] = avg - diff
             new[0][indices[0][4]] = avg - diff/2
-            code.interact(local=dict(globals(), **locals()))
+            # code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
             y_t_probs = new
 
