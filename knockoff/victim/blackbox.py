@@ -93,15 +93,13 @@ class Blackbox(object):
         if self.defense == 'flatten':
             topk_vals, indices = torch.topk(y_t_probs, 5)
             topk_vals = topk_vals.cpu().detach().numpy()
-            avg = sum(topk_vals)/5
-
-            code.interact(local=dict(globals(), **locals()))
+            avg = topk_vals.sum()/5
             y_t_probs[indices[0]] = avg + 0.000001
             y_t_probs[indices[1]] = avg + 0.0000005
             y_t_probs[indices[2]] = avg
             y_t_probs[indices[3]] = avg - 0.0000005
             y_t_probs[indices[4]] = avg - 0.000001
-            code.interact(local=dict(globals(), **locals()))
+            # code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
 
 
