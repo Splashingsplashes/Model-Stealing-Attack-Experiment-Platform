@@ -173,7 +173,7 @@ class JacobianAdversary(object):
 
         code.interact(local=dict(globals(), **locals()))
 
-        print(f"Original variance (from f'): {originalVar/budget:.5f} ｜ Jacobian Variance (from f): {jacobianVar/budget:.5f} | Adversarial Variance (for training f'): {adversarialVar/budget:.5f}")
+        print(f"Original variance (from f'): {originalVar/budget:.10f} ｜ Jacobian Variance (from f): {jacobianVar/budget:.10f} | Adversarial Variance (for training f'): {adversarialVar/budget:.10f}")
 
 
         return selected_x
