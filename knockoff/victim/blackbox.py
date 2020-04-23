@@ -94,16 +94,15 @@ class Blackbox(object):
             topk_vals, indices = torch.topk(y_t_probs, 5)
             topk_vals = topk_vals.cpu().detach().numpy()
             avg = topk_vals.sum()/5
-            diff = avg / 1000
-            # code.interact(local=dict(globals(), **locals()))
+            diff = avg/1000
             new = y_t_probs.clone()
-            values = [avg+diff,avg+diff/2,avg,avg-diff/2,avg-diff]
-            values = torch.tensor(values)
-            code.interact(local=dict(globals(), **locals()))
-            new = new.scatter(1,indices,values)
-            code.interact(local=dict(globals(), **locals()))
+            new[0][indices[0][0]] = avg + diff
+            new[0][indices[0][1]] = avg + diff/2
+            new[0][indices[0][2]] = avg
+            new[0][indices[0][3]] = avg - diff
+            new[0][indices[0][4]] = avg - diff/2
+            # code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
-
             y_t_probs = new
 
 
