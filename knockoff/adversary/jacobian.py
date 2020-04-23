@@ -49,7 +49,7 @@ def fgsm(inputs, targets, model, criterion, eps):
 
     output = model(crafting_input).double()
     loss = criterion(output, crafting_target)
-    model.model.zero_grad()
+    model.zero_grad()
     loss.backward()
     # loss.requires_grad = True
     # output.requires_grad_()

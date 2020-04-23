@@ -108,7 +108,7 @@ class JacobianAdversary(object):
                 # make target batch size = 1 by encapsulate it with a list
                 target = torch.tensor([target]).to(self.device)
 
-                """Query the adversarial model"""
+                """Query the local adversarial model"""
                 self.model.eval()
                 y_output = self.model(sampled_x)
                 originalVar += self.printStats(y_output,action)
