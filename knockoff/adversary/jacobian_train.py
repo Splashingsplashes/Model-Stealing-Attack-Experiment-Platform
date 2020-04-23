@@ -92,9 +92,11 @@ def main():
     parser.add_argument('--argmaxed', action='store_true', help='Only consider argmax labels', default=False)
     parser.add_argument('--optimizer_choice', type=str, help='Optimizer', default='sgdm',
                         choices=('sgd', 'sgdm', 'adam', 'adagrad'))
+    parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
+
     args = parser.parse_args()
     params = vars(args)
-
+    defense = params['defense']
     torch.manual_seed(cfg.DEFAULT_SEED)
     if params['device_id'] >= 0:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(params['device_id'])
@@ -107,7 +109,7 @@ def main():
     # ----------- Set up transferset
     algo = params['algo']
     eps = params['eps']
-    transferset_path = osp.join(model_dir+"-jacobian", 'eps='+str(eps)+'&algo='+algo+'-transferset.pickle')
+    transferset_path = osp.join(model_dir+"-jacobian", algo+'-'+defense+'-transferset.pickle')
     with open(transferset_path, 'rb') as rf:
         transferset_samples = pickle.load(rf)
     num_classes = transferset_samples[0][1].size(0)
