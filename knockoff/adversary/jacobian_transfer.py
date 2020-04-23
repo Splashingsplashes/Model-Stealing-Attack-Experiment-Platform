@@ -86,6 +86,10 @@ class JacobianAdversary(object):
         optimizer = optim.SGD(self.model.parameters(), lr=0.01, momentum=0.5, weight_decay=5e-4)
         criterion = model_utils.soft_cross_entropy
 
+        originalVar = 0
+        jacobianVar = 0
+        adversarialVar = 0
+
         with tqdm(total=budget) as pbar:
             for iterate in range(1, budget+1):
                 # Sample an action
@@ -107,7 +111,7 @@ class JacobianAdversary(object):
                 """Query the adversarial model"""
                 self.model.eval()
                 y_output = self.model(sampled_x)
-                self.printStats(y_output,action)
+                originalVar += self.printStats(y_output,action)
 
 
                 """generate adversarial sample"""
@@ -121,7 +125,7 @@ class JacobianAdversary(object):
 
                 jacobian_output = self.blackbox(jacobian_input)
 
-                self.printStats(jacobian_output, action)
+                jacobianVar += self.printStats(jacobian_output, action)
 
 
 
@@ -134,6 +138,7 @@ class JacobianAdversary(object):
                 """training knockoff nets for sampled data"""
                 # Test new labels
                 y_hat = self.model(jacobian_input)
+                adversarialVar += self.printStats(y_hat, action)
 
                 """Compute rewards"""
                 reward = self._reward(jacobian_output.detach(), y_hat, iterate)
@@ -153,20 +158,21 @@ class JacobianAdversary(object):
                 aux_exp = np.exp(h_func)
                 probs = aux_exp / np.sum(aux_exp)
                 pbar.update()
-                code.interact(local=dict(globals(), **locals()))
 
                 generated_sample = jacobian_input.detach().cpu().numpy()[0]
                 generated_sample = np.rollaxis(generated_sample, 0, 3)
 
                 """prepare transferset"""
                 selected_x.append((generated_sample, jacobian_output.cpu().squeeze().detach()))
-                code.interact(local=dict(globals(), **locals()))
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
 
             #
             # return thieved_classifier
         # print(probs)
+
+        print(f"Original variance (from f'): {originalVar/budget:.5f} ｜ Jacobian Variance (from f): {jacobian_output/budget:.5f} | Adversarial Variance (for training f'): {adversarialVar/budget:.5f}")
+
 
         return selected_x
 
@@ -292,6 +298,9 @@ class JacobianAdversary(object):
         print("original class:" + str(label))
         print("predicted class:" + str(pred_class))
         print("=============================")
+
+        return np.var(top5)
+
 def main():
     parser = argparse.ArgumentParser(description='Construct apaptive transfer set')
     parser.add_argument('victim_model_dir', metavar='PATH', type=str,
