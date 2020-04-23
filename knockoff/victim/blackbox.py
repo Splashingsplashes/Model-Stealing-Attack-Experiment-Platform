@@ -105,7 +105,19 @@ class Blackbox(object):
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
             y_t_probs = new
 
-
+        if self.defense == 'fix':
+            topk_vals, indices = torch.topk(y_t_probs, 5)
+            topk_vals = topk_vals.cpu().detach().numpy()
+            total = topk_vals.sum()
+            new = y_t_probs.clone()
+            new[0][indices[0][0]] = 0.8 * total
+            new[0][indices[0][1]] = 0.1 * total
+            new[0][indices[0][2]] = 0.05 * total
+            new[0][indices[0][3]] = 0.035 * total
+            new[0][indices[0][4]] = 0.015 * total
+            # code.interact(local=dict(globals(), **locals()))
+            # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
+            y_t_probs = new
 
         return y_t_probs
 
