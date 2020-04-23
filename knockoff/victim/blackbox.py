@@ -29,7 +29,7 @@ __status__ = "Development"
 
 
 class Blackbox(object):
-    def __init__(self, model, defense, device=None, output_type='probs', topk = None, rounding=None, ):
+    def __init__(self, model, defense=None, device=None, output_type='probs', topk = None, rounding=None, ):
         self.device = torch.device('cuda') if device is None else device
         self.output_type = output_type
 
@@ -92,9 +92,10 @@ class Blackbox(object):
 
         if self.defense == 'flatten':
             topk_vals, indices = torch.topk(y_t_probs, 5)
-            code.interact(local=dict(globals(), **locals()))
             topk_vals = topk_vals.cpu().detach().numpy()
             avg = sum(topk_vals)/5
+
+            code.interact(local=dict(globals(), **locals()))
             y_t_probs[indices[0]] = avg + 0.000001
             y_t_probs[indices[1]] = avg + 0.0000005
             y_t_probs[indices[2]] = avg
