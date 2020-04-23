@@ -29,7 +29,7 @@ __status__ = "Development"
 
 
 class Blackbox(object):
-    def __init__(self, model, device=None, output_type='probs', topk = None, rounding=None, defense=None):
+    def __init__(self, model, defense, device=None, output_type='probs', topk = None, rounding=None, ):
         self.device = torch.device('cuda') if device is None else device
         self.output_type = output_type
 
@@ -102,6 +102,9 @@ class Blackbox(object):
             y_t_probs[indices[4]] = avg - 0.000001
             code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
+
+
+
 
         return y_t_probs
 

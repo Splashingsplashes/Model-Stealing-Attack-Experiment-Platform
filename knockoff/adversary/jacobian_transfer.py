@@ -171,6 +171,8 @@ class JacobianAdversary(object):
             # return thieved_classifier
         # print(probs)
 
+        code.interact(local=dict(globals(), **locals()))
+
         print(f"Original variance (from f'): {originalVar/budget:.5f} ｜ Jacobian Variance (from f): {jacobian_output/budget:.5f} | Adversarial Variance (for training f'): {adversarialVar/budget:.5f}")
 
 
@@ -359,7 +361,7 @@ def main():
     # ----------- Initialize blackbox
     blackbox_dir = params['victim_model_dir']
     defense = params['defense']
-    blackbox = Blackbox.from_modeldir(blackbox_dir, device, defense)
+    blackbox = Blackbox.from_modeldir(blackbox_dir, defense, device)
 
     # ----------- Initialize Knockoff Nets
     model_name = params['model_arch']
