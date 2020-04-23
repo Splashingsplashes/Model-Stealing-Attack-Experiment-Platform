@@ -95,11 +95,11 @@ class Blackbox(object):
             topk_vals = topk_vals.cpu().detach().numpy()
             avg = topk_vals.sum()/5
             code.interact(local=dict(globals(), **locals()))
-            y_t_probs[0][indices[0]] = avg + 0.000001
-            y_t_probs[0][indices[1]] = avg + 0.0000005
-            y_t_probs[0][indices[2]] = avg
-            y_t_probs[0][indices[3]] = avg - 0.0000005
-            y_t_probs[0][indices[4]] = avg - 0.000001
+            y_t_probs[0][indices[0][0]] = avg + 0.000001
+            y_t_probs[0][indices[0][1]] = avg + 0.0000005
+            y_t_probs[0][indices[0][2]] = avg
+            y_t_probs[0][indices[0][3]] = avg - 0.0000005
+            y_t_probs[0][indices[0][4]] = avg - 0.000001
             # code.interact(local=dict(globals(), **locals()))
             # top5 = [y_t_probs[idx] for idx in np.argsort(y_t_probs)[-5:][::1]]
 
