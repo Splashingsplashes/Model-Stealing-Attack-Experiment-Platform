@@ -43,7 +43,7 @@ class Blackbox(object):
         self.__call_count = 0
 
     @classmethod
-    def from_modeldir(cls, model_dir, device=None, output_type='probs'):
+    def from_modeldir(cls, model_dir, defense, device=None, output_type='probs'):
         device = torch.device('cuda') if device is None else device
 
         # What was the model architecture used by this model?
@@ -71,7 +71,7 @@ class Blackbox(object):
         model.load_state_dict(checkpoint['state_dict'])
         print("=> loaded checkpoint (epoch {}, acc={:.2f})".format(epoch, best_test_acc))
 
-        blackbox = cls(model, device, output_type)
+        blackbox = cls(model, defense, device, output_type)
         return blackbox
 
     def truncate_output(self, y_t_probs):
