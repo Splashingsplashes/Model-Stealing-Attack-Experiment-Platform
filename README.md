@@ -86,3 +86,6 @@ python ./knockoff/adversary/train.py random models/adversary/caltech256-resnet34
 ```bash
 python ./knockoff/adversary/jacobian_train.py models/adversary/caltech256-resnet34 resnet34 Caltech256 --budgets 1000 --algo fgsm --eps 0.5 -d -1 --pretrained imagenet --log-interval 1000 --epochs 20 --lr 0.1 -w 4
 ```
+
+# for samples generated with blackbox that adopts defense strategy(changing confidence values returned), add --defense DEFENSE 
+# DEFENSE = [flatten, fix]
