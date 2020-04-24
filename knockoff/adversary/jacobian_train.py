@@ -109,7 +109,10 @@ def main():
     # ----------- Set up transferset
     algo = params['algo']
     eps = params['eps']
-    transferset_path = osp.join(model_dir+"-jacobian", algo+'-'+defense+'-transferset.pickle')
+    if defense:
+        transferset_path = osp.join(model_dir+"-jacobian", algo+'-'+defense+'-transferset.pickle')
+    else:
+        transferset_path = osp.join(model_dir + "-jacobian", algo  + '-transferset.pickle')
     with open(transferset_path, 'rb') as rf:
         transferset_samples = pickle.load(rf)
     num_classes = transferset_samples[0][1].size(0)
