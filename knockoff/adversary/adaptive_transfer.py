@@ -279,6 +279,8 @@ def main():
     # ----------- Other params
     parser.add_argument('-d', '--device_id', metavar='D', type=int, help='Device id', default=0)
     parser.add_argument('--pretrained', type=str, help='Use pretrained network', default=None)
+    parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
+
     args = parser.parse_args()
     params = vars(args)
 

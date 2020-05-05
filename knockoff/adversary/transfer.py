@@ -118,6 +118,10 @@ def main():
     # ----------- Other params
     parser.add_argument('-d', '--device_id', metavar='D', type=int, help='Device id', default=0)
     parser.add_argument('-w', '--nworkers', metavar='N', type=int, help='# Worker threads to load data', default=10)
+    parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
+
+
+
     args = parser.parse_args()
     params = vars(args)
 
