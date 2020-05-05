@@ -118,7 +118,7 @@ class AdaptiveAdversary(object):
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
-                selected_x.append((sampled_x.cpu().detach(), y_output.cpu().squeeze().detach()))
+                selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
                 pathCollection.append((path[0], y_output.cpu().squeeze()))
 
 
