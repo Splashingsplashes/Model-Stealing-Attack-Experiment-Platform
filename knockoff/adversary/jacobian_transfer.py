@@ -119,7 +119,7 @@ class JacobianAdversary(object):
                     # modification needed: target class != action
                     jacobian_input = jacobian.jsma(self.model, sampled_x, action).to(self.device)
                 elif self.algo == 'fgsm':
-                    jacobian_input = jacobian.fgsm(sampled_x, np.random.randint(256), self.model, criterion, self.eps).to(self.device)
+                    jacobian_input = jacobian.fgsm(sampled_x, action, self.model, criterion, self.eps).to(self.device)
                 else:
                     raise NotImplementedError
 
