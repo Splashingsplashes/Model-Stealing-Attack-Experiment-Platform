@@ -124,18 +124,19 @@ class Blackbox(object):
     def __call__(self, query_input):
         TypeCheck.multiple_image_blackbox_input_tensor(query_input)
 
-        # with torch.no_grad():
-        #     query_input = query_input.to(self.device)
-        #     query_output = self.model(query_input)
-        #     self.__call_count += query_input.shape[0]
+        with torch.no_grad():
+            query_input = query_input.to(self.device)
+            query_output = self.model(query_input)
+            self.__call_count += query_input.shape[0]
+
+            query_output_probs = F.softmax(query_output, dim=1).cpu()
+
+        # query_input = query_input.to(self.device)
+        # query_output = self.model(query_input)
+        # self.__call_count += query_input.shape[0]
         #
-        #     query_output_probs = F.softmax(query_output, dim=1).cpu()
+        # query_output_probs = F.softmax(query_output, dim=1).cpu()
 
-        query_input = query_input.to(self.device)
-        query_output = self.model(query_input)
-        self.__call_count += query_input.shape[0]
-
-        query_output_probs = F.softmax(query_output, dim=1).cpu()
         query_output_probs = self.truncate_output(query_output_probs)
 
 

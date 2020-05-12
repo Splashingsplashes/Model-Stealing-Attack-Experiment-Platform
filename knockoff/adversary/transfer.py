@@ -57,7 +57,6 @@ class RandomAdversary(object):
         self.transferset = []
 
     def get_transferset(self, budget):
-        self.blackbox.eval()
         start_B = 0
         end_B = budget
         with tqdm(total=budget) as pbar:
