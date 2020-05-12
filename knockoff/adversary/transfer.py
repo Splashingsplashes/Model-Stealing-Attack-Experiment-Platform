@@ -85,7 +85,7 @@ class RandomAdversary(object):
 
                 for i in range(x_t.size(0)):
                     img_t_i = img_t[i].squeeze() if isinstance(img_t[i], np.ndarray) else img_t[i]
-                    self.transferset.append((img_t_i, y_t[i].cpu().squeeze()))
+                    self.transferset.append((img_t_i, y_t[i].detach().cpu().squeeze()))
 
                 pbar.update(x_t.size(0))
 
