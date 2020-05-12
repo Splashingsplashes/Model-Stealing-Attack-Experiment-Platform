@@ -70,8 +70,8 @@ class RandomAdversary(object):
                     self.idx_set = set(range(len(self.queryset)))
 
                 x_t = torch.stack([self.queryset[i][0] for i in idxs]).to(self.blackbox.device)
-                y_t = self.blackbox(x_t).cpu()
-
+                y_t = self.blackbox(x_t)
+                y_t = y_t.cpu()
                 if hasattr(self.queryset, 'samples'):
                     # Any DatasetFolder (or subclass) has this attribute
                     # Saving image paths are space-efficient
