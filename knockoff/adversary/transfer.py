@@ -123,7 +123,7 @@ def main():
     args = parser.parse_args()
     params = vars(args)
 
-    out_path = params['out_dir']
+    out_path = params['out_dir'+'random']
     knockoff_utils.create_dir(out_path)
 
     torch.manual_seed(cfg.DEFAULT_SEED)
@@ -150,7 +150,7 @@ def main():
     # ----------- Initialize adversary
     batch_size = params['batch_size']
     nworkers = params['nworkers']
-    transfer_out_path = osp.join(out_path+"-random", 'transferset.pickle')
+    transfer_out_path = osp.join(out_path, 'transferset.pickle')
     adversary = RandomAdversary(blackbox, queryset, batch_size=batch_size)
 
     print('=> constructing transfer set...')
