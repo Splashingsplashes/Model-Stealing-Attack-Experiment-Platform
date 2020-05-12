@@ -7,6 +7,6 @@ import knockoff.models.imagenet
 import code
 
 
-modelname = 'resnet34'
-model = knockoff.models.imagenet.__dict__[modelname](pretrained='imagenet')
-code.interact(local=dict(globals(), **locals()))
+# modelname = 'resnet34'
+# model = knockoff.models.imagenet.__dict__[modelname](pretrained='imagenet')
+print(knockoff.models.imagenet.__dict__.keys())

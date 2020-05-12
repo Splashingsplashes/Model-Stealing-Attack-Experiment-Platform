@@ -120,8 +120,6 @@ def main():
     parser.add_argument('-w', '--nworkers', metavar='N', type=int, help='# Worker threads to load data', default=10)
     parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
 
-
-
     args = parser.parse_args()
     params = vars(args)
 
@@ -146,7 +144,8 @@ def main():
 
     # ----------- Initialize blackbox
     blackbox_dir = params['victim_model_dir']
-    blackbox = Blackbox.from_modeldir(blackbox_dir, device)
+    defense = params['defense']
+    blackbox = Blackbox.from_modeldir(blackbox_dir, defense, device)
 
     # ----------- Initialize adversary
     batch_size = params['batch_size']
