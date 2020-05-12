@@ -123,7 +123,7 @@ def main():
     args = parser.parse_args()
     params = vars(args)
 
-    out_path = params['out_dir'+'random']
+    out_path = params['out_dir']+'-random'
     knockoff_utils.create_dir(out_path)
 
     torch.manual_seed(cfg.DEFAULT_SEED)
