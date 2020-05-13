@@ -89,7 +89,6 @@ class AdaptiveAdversary(object):
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
 
-
                 # Query the victim classifier
                 """to cuda"""
                 sampled_x = sampled_x.to(self.device)
@@ -102,8 +101,6 @@ class AdaptiveAdversary(object):
                 queried_labels.append(y_output.cpu())
 
                 # Train the thieved classifier
-                """to cuda"""
-                # model = self.model.to('cuda')
                 self.model.train()
 
                 optimizer = optim.SGD(self.model.parameters(), lr=0.01, momentum=0.5, weight_decay=5e-4)
@@ -114,16 +111,18 @@ class AdaptiveAdversary(object):
                 """training knockoff nets for sampled data"""
 
                 # Test new labels
+                self.model.eval()
                 y_hat = self.model(sampled_x)
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
-                pathCollection.append((path[0], y_output.cpu().squeeze()))
+
+                pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
 
 
                 # Compute rewards
-                reward = self._reward(y_output.detach(), y_hat.cpu(), iterate)
+                reward = self._reward(y_output.detach(), y_hat.detach().cpu(), iterate)
                 avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
 
                 # Update learning rate
@@ -147,7 +146,6 @@ class AdaptiveAdversary(object):
             #
             # return thieved_classifier
         print(probs)
-        # code.interact(local=dict(globals(), **locals()))
         return selected_x
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):

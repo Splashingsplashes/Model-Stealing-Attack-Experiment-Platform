@@ -56,7 +56,9 @@ class TransferSetImages(Dataset):
         # code.interact(local=dict(globals(), **locals()))
         # img = img[0]
         # img = np.transpose(img)
+        """added code"""
         img = img.astype(np.uint8)
+        """/added code"""
         img = Image.fromarray(img)
 
         if self.transform is not None:
