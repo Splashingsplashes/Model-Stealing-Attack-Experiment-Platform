@@ -106,6 +106,7 @@ class AdaptiveAdversary(object):
                 optimizer = optim.SGD(self.model.parameters(), lr=0.01, momentum=0.5, weight_decay=5e-4)
                 criterion = model_utils.soft_cross_entropy
 
+                y_output = y_output.to(self.device)
                 self.train(self.model, optimizer, criterion, sampled_x, y_output)
 
                 """training knockoff nets for sampled data"""
