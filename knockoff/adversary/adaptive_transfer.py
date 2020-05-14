@@ -120,7 +120,6 @@ class AdaptiveAdversary(object):
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
 
-
                 # Compute rewards
                 reward = self._reward(y_output.detach(), y_hat.detach().cpu(), iterate)
                 avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
@@ -217,7 +216,9 @@ class AdaptiveAdversary(object):
         probs_output = aux_exp / np.sum(aux_exp.numpy())
 
         # Compute thieved probs
-        aux_exp = np.exp(output[0].detach().numpy())
+        output = output[0].detach().numpy()
+        output = output.astype('float128')
+        aux_exp = np.exp(output)
         probs_hat = aux_exp / np.sum(aux_exp)
 
         # Compute reward, cross entropy loss
