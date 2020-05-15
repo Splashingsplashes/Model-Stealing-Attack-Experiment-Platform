@@ -81,10 +81,14 @@ class AdaptiveAdversary(object):
         avg_reward = 0
         actionListSelected = []
         pathCollection = []
+        class_count = np.zeros(self.num_actions)
         with tqdm(total=budget) as pbar:
             for iterate in range(1, budget+1):
                 # Sample an action
                 action = np.random.choice(np.arange(0, self.num_actions), p=probs)
+
+                class_count[action] += 1
+
                 actionListSelected.append(action)
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
@@ -144,6 +148,7 @@ class AdaptiveAdversary(object):
             #
             # return thieved_classifier
         # print(probs)
+        print(class_count)
         return selected_x
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
