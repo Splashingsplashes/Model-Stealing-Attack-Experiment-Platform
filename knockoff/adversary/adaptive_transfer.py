@@ -89,6 +89,7 @@ class AdaptiveAdversary(object):
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
 
+                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 # Query the victim classifier
                 """to cuda"""
                 sampled_x = sampled_x.to(self.device)
@@ -109,14 +110,11 @@ class AdaptiveAdversary(object):
                 y_output = y_output.to(self.device)
                 self.train(self.model, optimizer, criterion, sampled_x, y_output)
 
-                """training knockoff nets for sampled data"""
-
                 # Test new labels
                 self.model.eval()
                 y_hat = self.model(sampled_x)
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
-                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
