@@ -92,7 +92,7 @@ class AdaptiveAdversary(object):
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 # Query the victim classifier
                 """to cuda"""
-                sampled_x = sampled_x.to(self.device)
+                # sampled_x = sampled_x.to(self.device)
                 y_output = self.blackbox(sampled_x)
                 # code.interact(local=dict(globals(), **locals()))
 
