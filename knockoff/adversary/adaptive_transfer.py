@@ -89,11 +89,9 @@ class AdaptiveAdversary(object):
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
 
-                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
-                sampled_x = torch.Tensor(sampled_x)
                 # Query the victim classifier
                 """to cuda"""
-                # sampled_x = sampled_x.to(self.device)
+                sampled_x = sampled_x.to(self.device)
                 y_output = self.blackbox(sampled_x)
                 # code.interact(local=dict(globals(), **locals()))
 
@@ -116,7 +114,8 @@ class AdaptiveAdversary(object):
                 y_hat = self.model(sampled_x)
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
-                selected_x.append((sampled_x.cpu().numpy()[0], y_output.cpu().squeeze().detach()))
+                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
+                selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
                 print(pathCollection)
@@ -137,7 +136,7 @@ class AdaptiveAdversary(object):
 
                 # Update probs
                 aux_exp = np.exp(h_func)
-                probs = aux_exp / np.sum(aux_exp)
+                # probs = aux_exp / np.sum(aux_exp)
                 pbar.update()
 
                 # Train the thieved classifier the final time???
@@ -145,7 +144,7 @@ class AdaptiveAdversary(object):
 
             #
             # return thieved_classifier
-        print(probs)
+        # print(probs)
         return pathCollection
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
