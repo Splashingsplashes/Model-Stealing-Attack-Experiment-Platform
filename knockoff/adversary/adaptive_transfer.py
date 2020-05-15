@@ -134,7 +134,7 @@ class AdaptiveAdversary(object):
 
                 # Update probs
                 aux_exp = np.exp(h_func)
-                # probs = aux_exp / np.sum(aux_exp)
+                probs = aux_exp / np.sum(aux_exp)
                 code.interact(local=dict(globals(), **locals()))
                 pbar.update()
 
