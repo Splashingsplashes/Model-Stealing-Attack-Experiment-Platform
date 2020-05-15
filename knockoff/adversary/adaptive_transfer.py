@@ -120,7 +120,7 @@ class AdaptiveAdversary(object):
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
-                print(path[0], np.argmax(y_output.detach().cpu().squeeze()))
+                print(pathCollection)
 
                 # Compute rewards
                 reward = self._reward(y_output.detach(), y_hat.detach().cpu(), iterate)
