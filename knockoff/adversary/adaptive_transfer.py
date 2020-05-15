@@ -90,6 +90,7 @@ class AdaptiveAdversary(object):
                 sampled_x, path = self._sample_data(self.queryset, action)
 
                 sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
+                sampled_x = torch.Tensor(sampled_x)
                 # Query the victim classifier
                 """to cuda"""
                 # sampled_x = sampled_x.to(self.device)
@@ -115,7 +116,7 @@ class AdaptiveAdversary(object):
                 y_hat = self.model(sampled_x)
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
-                selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
+                selected_x.append((sampled_x.cpu().numpy()[0], y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
                 print(pathCollection)
