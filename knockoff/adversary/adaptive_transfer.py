@@ -138,9 +138,9 @@ class AdaptiveAdversary(object):
 
                 for a in range(self.num_actions):
                     if a != action:
-                        h_func[a] = h_func[a] + (1.0 / learning_rate[action]) * (reward - avg_reward) * (1 - probs[a])
-                    else:
                         h_func[a] = h_func[a] + (1.0 / learning_rate[action]) * (reward - avg_reward) * probs[a]
+                    else:
+                        h_func[a] = h_func[a] + (1.0 / learning_rate[action]) * (reward - avg_reward) * (1 - probs[a])
 
                 # Update probs
                 aux_exp = np.exp(h_func)
@@ -148,7 +148,6 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
                 print(class_count)
-                print(probs)
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
 
