@@ -227,7 +227,7 @@ class AdaptiveAdversary(object):
 
         # Compute thieved probs
         output = output[0].detach().numpy()
-        # output = output.astype('float128')
+        output = output.astype('float128')
         aux_exp = np.exp(output)
         probs_hat = aux_exp / np.sum(aux_exp)
 
