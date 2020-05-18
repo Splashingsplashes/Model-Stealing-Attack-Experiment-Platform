@@ -10,7 +10,7 @@ from datetime import datetime
 from collections import defaultdict as dd
 import code
 import numpy as np
-
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 import torch
@@ -75,6 +75,10 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
     epoch_size = len(train_loader.dataset)
     t_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(train_loader):
+
+        plt.imshow(inputs[0])
+        plt.savefig('path.png')
+
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         # code.interact(local=dict(globals(), **locals()))
