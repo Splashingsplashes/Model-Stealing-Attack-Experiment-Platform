@@ -16,6 +16,7 @@ import torch.optim as optim
 from tqdm import tqdm
 import torch
 import PIL
+from torchvision import transforms
 from matplotlib import pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
@@ -187,7 +188,9 @@ class AdaptiveAdversary(object):
 
                 if self.queryset.targets[idx] == action:
                     tensor = queryset[idx][0]
+                    img = transforms.ToPILImage
                     code.interact(local=dict(globals(), **locals()))
+                    img.save("tensor_original.bmp")
                     tensor = tensor.unsqueeze(0)
                     x.append(tensor)
                     path.append(queryset.samples[idx])
