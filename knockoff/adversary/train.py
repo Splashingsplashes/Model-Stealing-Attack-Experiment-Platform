@@ -59,8 +59,8 @@ class TransferSetImages(Dataset):
         """added code"""
         img = img.astype(np.uint8)
         """/added code"""
-        img = Image.fromarray(img)
-        img.show()
+        # img = Image.fromarray(img)
+        # img.show()
 
         if self.transform is not None:
             img = self.transform(img)
