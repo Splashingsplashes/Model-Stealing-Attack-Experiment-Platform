@@ -93,14 +93,14 @@ class AdaptiveAdversary(object):
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
 
+                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
+                sampled_x = torch.from_numpy(sampled_x)
+
                 # Query the victim classifier
                 """to cuda"""
+
                 sampled_x = sampled_x.to(self.device)
                 y_output = self.blackbox(sampled_x)
-                # code.interact(local=dict(globals(), **locals()))
-
-                # fake_label = np.argmax(y_output, axis=1)
-                # fake_label = to_categorical(labels=fake_label, nb_classes=self.classifier.nb_classes())
 
                 queried_labels.append(y_output.cpu())
 
@@ -117,10 +117,10 @@ class AdaptiveAdversary(object):
                 self.model.eval()
                 y_hat = self.model(sampled_x)
 
-                sampled_x = sampled_x.cpu().numpy()[0]
                 code.interact(local=dict(globals(), **locals()))
+
+                sampled_x = sampled_x.cpu().numpy()[0]
                 # sampled_x = np.transpose(sampled_x)
-                sampled_x = np.rollaxis(sampled_x, 0, 3)
                 # code.interact(local=dict(globals(), **locals()))
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
