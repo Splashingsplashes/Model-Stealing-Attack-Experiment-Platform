@@ -93,9 +93,6 @@ class AdaptiveAdversary(object):
                 actionListSelected.append(action)
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
-                plt.imshow(sampled_x[0])
-                plt.show()
-
 
                 # Query the victim classifier
                 """to cuda"""
@@ -126,6 +123,9 @@ class AdaptiveAdversary(object):
                 code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
+                plt.imshow(sampled_x[0])
+                plt.show()
+                
                 # code.interact(local=dict(globals(), **locals()))
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
