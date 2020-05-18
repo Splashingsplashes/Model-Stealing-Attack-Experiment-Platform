@@ -12,8 +12,7 @@ import code
 import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-from PIL import Image
-import PIL
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -77,8 +76,8 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
     t_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(train_loader):
 
-
-        inputs.save("path.jpg")
+        plt.imshow(inputs[0])
+        plt.savefig('path.png')
 
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
