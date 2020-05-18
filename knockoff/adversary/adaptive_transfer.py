@@ -118,6 +118,7 @@ class AdaptiveAdversary(object):
                 y_hat = self.model(sampled_x)
 
                 sampled_x = sampled_x.cpu().numpy()[0]
+                code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
                 # sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 # code.interact(local=dict(globals(), **locals()))
