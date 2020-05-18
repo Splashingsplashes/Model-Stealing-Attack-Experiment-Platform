@@ -62,11 +62,11 @@ class TransferSetImages(Dataset):
         # img = Image.fromarray(img)
         # img.show()
 
-        if self.transform is not None:
-            img = self.transform(img)
-
-        if self.target_transform is not None:
-            target = self.target_transform(target)
+        # if self.transform is not None:
+        #     img = self.transform(img)
+        #
+        # if self.target_transform is not None:
+        #     target = self.target_transform(target)
 
         return img, target
 
