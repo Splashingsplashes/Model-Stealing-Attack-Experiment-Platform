@@ -15,7 +15,7 @@ import numpy as np
 import torch.optim as optim
 from tqdm import tqdm
 import torch
-import matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
