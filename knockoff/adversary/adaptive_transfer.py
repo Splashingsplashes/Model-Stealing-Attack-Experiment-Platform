@@ -162,7 +162,7 @@ class AdaptiveAdversary(object):
             # return thieved_classifier
         # print(probs)
         print(class_count)
-        return path
+        return pathCollection
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
         optimizer.zero_grad()
