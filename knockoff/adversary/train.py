@@ -42,8 +42,8 @@ class TransferSetImagePaths(ImageFolder):
 class TransferSetImages(Dataset):
     def __init__(self, samples, transform=None, target_transform=None):
         self.samples = samples
-        self.transform = None
-        self.target_transform = None
+        self.transform = transform
+        self.target_transform = target_transform
 
         self.data = [self.samples[i][0] for i in range(len(self.samples))]
         self.targets = [self.samples[i][1] for i in range(len(self.samples))]
