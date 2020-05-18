@@ -126,7 +126,7 @@ class AdaptiveAdversary(object):
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
                 img = PIL.Image.fromarray(sampled_x, "RGB")
                 img.save('base.bmp')
-                
+
                 # plt.imshow(sampled_x)
                 # plt.savefig('rollaxis.png')
                 code.interact(local=dict(globals(), **locals()))
@@ -184,8 +184,10 @@ class AdaptiveAdversary(object):
 
         try:
             for idx in range(len(queryset)):
+
                 if self.queryset.targets[idx] == action:
                     tensor = queryset[idx][0]
+                    code.interact(local=dict(globals(), **locals()))
                     tensor = tensor.unsqueeze(0)
                     x.append(tensor)
                     path.append(queryset.samples[idx])
