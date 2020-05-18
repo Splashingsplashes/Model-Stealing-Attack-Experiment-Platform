@@ -15,6 +15,7 @@ import numpy as np
 import torch.optim as optim
 from tqdm import tqdm
 import torch
+import PIL
 from matplotlib import pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
@@ -123,8 +124,11 @@ class AdaptiveAdversary(object):
                 code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
-                plt.imshow(sampled_x)
-                plt.savefig('rollaxis.png')
+                img = PIL.Image.fromarray(sampled_x, "RGB")
+                img.save('base.bmp')
+                
+                # plt.imshow(sampled_x)
+                # plt.savefig('rollaxis.png')
                 code.interact(local=dict(globals(), **locals()))
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
