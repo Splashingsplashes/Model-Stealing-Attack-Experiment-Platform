@@ -15,7 +15,7 @@ import numpy as np
 import torch.optim as optim
 from tqdm import tqdm
 import torch
-from matplotlib import pyplot as plt
+import matplotlib
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
@@ -93,8 +93,8 @@ class AdaptiveAdversary(object):
                 actionListSelected.append(action)
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
-                plt.show(sampled_x)
-
+                matplotlib.pyplot.imshow(sampled_x,block=True)
+                matplotlib.pyplot.show()
 
                 # Query the victim classifier
                 """to cuda"""
