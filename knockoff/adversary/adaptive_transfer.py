@@ -93,7 +93,7 @@ class AdaptiveAdversary(object):
                 actionListSelected.append(action)
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
-                plt.imshow(sampled_x,block=True)
+                plt.imshow(sampled_x)
                 plt.show()
 
 
