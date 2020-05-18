@@ -118,7 +118,7 @@ class AdaptiveAdversary(object):
                 y_hat = self.model(sampled_x)
 
                 # sampled_x = np.transpose(sampled_x.cpu().numpy()[0])
-                sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
+                # sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
                 selected_x.append((sampled_x, y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
@@ -155,7 +155,7 @@ class AdaptiveAdversary(object):
             # return thieved_classifier
         # print(probs)
         print(class_count)
-        return pathCollection
+        return selected_x
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
         optimizer.zero_grad()
