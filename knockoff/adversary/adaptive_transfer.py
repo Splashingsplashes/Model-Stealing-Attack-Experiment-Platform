@@ -188,7 +188,7 @@ class AdaptiveAdversary(object):
 
                 if self.queryset.targets[idx] == action:
                     tensor = queryset[idx][0]
-                    img = transforms.ToPILImage
+                    img = transforms.ToPILImage()(tensor).convert('RGB')
                     code.interact(local=dict(globals(), **locals()))
                     img.save("tensor_original.bmp")
                     tensor = tensor.unsqueeze(0)
