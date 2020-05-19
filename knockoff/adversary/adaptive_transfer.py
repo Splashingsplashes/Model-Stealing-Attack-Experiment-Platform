@@ -121,7 +121,7 @@ class AdaptiveAdversary(object):
                 self.model.eval()
                 y_hat = self.model(sampled_x_n)
 
-                sampled_x = sampled_x.cpu().numpy()[0]
+                sampled_x = sampled_x.cpu().numpy()
                 # print(sampled_x[0][0])
                 # code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
