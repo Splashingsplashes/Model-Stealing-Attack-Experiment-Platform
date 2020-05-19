@@ -216,7 +216,7 @@ class AdaptiveAdversary(object):
         sampled_x_n = trfm(x[rnd_idx])
         print(x[rnd_idx])
         print(sampled_x_n)
-        return x[rnd_idx], path[rnd_idx]
+        return x[rnd_idx].unsqueeze(0), path[rnd_idx]
 
     def _reward(self, target, output, n):
         if self.reward == 'cert':
