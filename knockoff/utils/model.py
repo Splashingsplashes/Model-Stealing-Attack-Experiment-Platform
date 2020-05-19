@@ -76,9 +76,6 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
     t_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(train_loader):
 
-        # plt.imshow(inputs[0])
-        # plt.savefig('path.png')
-
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         # code.interact(local=dict(globals(), **locals()))
@@ -158,7 +155,7 @@ def train_model(model, trainset, out_path, batch_size=64, criterion_train=None, 
 
     # Data loaders
     train_loader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    code.interact(local=dict(globals(), **locals()))
+    #code.interact(local=dict(globals(), **locals()))
     if testset is not None:
         test_loader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     else:

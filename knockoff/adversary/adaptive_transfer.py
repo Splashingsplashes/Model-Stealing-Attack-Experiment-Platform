@@ -198,9 +198,9 @@ class AdaptiveAdversary(object):
 
             img = transforms.ToPILImage()(x[rnd_idx][0]).convert('RGB')
             img.save("tensor_original.bmp")
-            print(path[rnd_idx])
+            # print(path[rnd_idx])
             # code.interact(local=dict(globals(), **locals()))
-            print(x[rnd_idx][0][0][0])
+            # print(x[rnd_idx][0][0][0])
 
         except:
             print('action = ' + str(action))
