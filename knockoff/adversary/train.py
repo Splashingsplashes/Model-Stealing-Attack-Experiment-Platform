@@ -82,7 +82,7 @@ def samples_to_transferset(samples, budget=None, transform=None, target_transfor
     if isinstance(sample_x, str):
         return TransferSetImagePaths(samples[:budget], transform=transform, target_transform=target_transform)
     elif isinstance(sample_x, np.ndarray):
-        return TransferSetImages(samples[:budget], transform=transform, target_transform=target_transform)
+        return TransferSetImages(samples[:budget], transform=None, target_transform=target_transform)
     else:
         raise ValueError('type(x_i) ({}) not recognized. Supported types = (str, np.ndarray)'.format(type(sample_x)))
 

@@ -78,7 +78,7 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
                                 std=[0.229, 0.224, 0.225])
 
     for batch_idx, (inputs, targets) in enumerate(train_loader):
-        inputs[0] = trfm(inputs[0])
+        # inputs[0] = trfm(inputs[0])
 
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
@@ -125,7 +125,7 @@ def test_step(model, test_loader, criterion, device, epoch=0., silent=False):
                                 std=[0.229, 0.224, 0.225])
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(test_loader):
-            inputs[0] = trfm(inputs[0])
+            # inputs[0] = trfm(inputs[0])
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
