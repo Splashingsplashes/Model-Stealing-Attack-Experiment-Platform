@@ -95,7 +95,8 @@ class AdaptiveAdversary(object):
                 actionListSelected.append(action)
                 # Sample data to attack
                 sampled_x, path = self._sample_data(self.queryset, action)
-
+                print(sampled_x.shape)
+                print(type(sampled_x))
                 # Query the victim classifier
                 """to cuda"""
                 sampled_x = sampled_x.to(self.device)
@@ -122,9 +123,13 @@ class AdaptiveAdversary(object):
                 y_hat = self.model(sampled_x)
 
                 sampled_x = sampled_x.cpu().numpy()[0]
+                print(sampled_x.shape)
+                print(type(sampled_x))
                 # code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
+                print(sampled_x.shape)
+                print(type(sampled_x))
                 img = PIL.Image.fromarray(sampled_x, "RGB")
                 img.save('base.bmp')
 
@@ -202,7 +207,7 @@ class AdaptiveAdversary(object):
             img = transforms.ToPILImage()(x[rnd_idx][0]).convert('RGB')
             img.save("tensor_original.bmp")
             print(path[rnd_idx])
-            code.interact(local=dict(globals(), **locals()))
+            # code.interact(local=dict(globals(), **locals()))
 
 
         except:
