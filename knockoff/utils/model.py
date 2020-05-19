@@ -12,7 +12,7 @@ import code
 import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-
+from torchvision import transforms
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -74,7 +74,12 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
     train_loss_batch = 0
     epoch_size = len(train_loader.dataset)
     t_start = time.time()
+    trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225])
     for batch_idx, (inputs, targets) in enumerate(train_loader):
+
+        inputs = trfm(inputs)
+        targets = trfm(targets)
 
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
