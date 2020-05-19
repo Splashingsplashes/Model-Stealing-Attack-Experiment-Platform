@@ -94,17 +94,13 @@ class AdaptiveAdversary(object):
 
                 actionListSelected.append(action)
                 # Sample data to attack
-                sampled_x, path = self._sample_data(self.queryset, action)
+                sampled_x, sampled_x_n, path = self._sample_data(self.queryset, action)
                 # Query the victim classifier
                 """to cuda"""
-                trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
-                sampled_x_n = trfm(sampled_x)
-                print(sampled_x)
-                print(sampled_x_n)
+
                 sampled_x_n = sampled_x_n.to(self.device)
 
-                y_output = self.blackbox(sampled_x_n[0])
+                y_output = self.blackbox(sampled_x_n.unsqueeze(0))
                 # code.interact(local=dict(globals(), **locals()))
 
                 # fake_label = np.argmax(y_output, axis=1)
@@ -214,9 +210,7 @@ class AdaptiveAdversary(object):
             print('action = ' + str(action))
             code.interact(local=dict(globals(), **locals()))
         sampled_x_n = trfm(x[rnd_idx])
-        print(x[rnd_idx])
-        print(sampled_x_n)
-        return x[rnd_idx], path[rnd_idx]
+        return x[rnd_idx], sampled_x_n, path[rnd_idx]
 
     def _reward(self, target, output, n):
         if self.reward == 'cert':
