@@ -202,9 +202,7 @@ class AdaptiveAdversary(object):
 
             trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                         std=[0.229, 0.224, 0.225])
-            sampled_x_n = trfm(x[rnd_idx])
-            print(x[rnd_idx])
-            print(sampled_x_n)
+
 
             # img = transforms.ToPILImage()(x[rnd_idx][0]).convert('RGB')
             # img.save("tensor_original.bmp")
@@ -215,6 +213,9 @@ class AdaptiveAdversary(object):
         except:
             print('action = ' + str(action))
             code.interact(local=dict(globals(), **locals()))
+        sampled_x_n = trfm(x[rnd_idx])
+        print(x[rnd_idx])
+        print(sampled_x_n)
         return x[rnd_idx], path[rnd_idx]
 
     def _reward(self, target, output, n):
