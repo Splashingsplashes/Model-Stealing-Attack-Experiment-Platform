@@ -121,9 +121,11 @@ def test_step(model, test_loader, criterion, device, epoch=0., silent=False):
     correct = 0
     total = 0
     t_start = time.time()
-
+    trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225])
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(test_loader):
+            inputs[0] = trfm(inputs[0])
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
