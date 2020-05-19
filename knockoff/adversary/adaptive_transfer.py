@@ -124,6 +124,7 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
+                print(sampled_x.shape)
                 img = PIL.Image.fromarray(sampled_x)
                 img.save('rollaxis.bmp')
 
