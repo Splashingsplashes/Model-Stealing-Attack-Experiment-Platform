@@ -205,7 +205,7 @@ class AdaptiveAdversary(object):
             code.interact(local=dict(globals(), **locals()))
 
 
-        except ValueError:
+        except:
             print('action = ' + str(action))
             code.interact(local=dict(globals(), **locals()))
         return x[rnd_idx], path[rnd_idx]
