@@ -57,7 +57,7 @@ class TransferSetImages(Dataset):
         # img = img[0]
         # img = np.transpose(img)
         """added code"""
-        img = transforms.ToPILImage()(np.uint8(img*255)).convert('RGB')
+        # img = transforms.ToPILImage()(np.uint8(img*255)).convert('RGB')
         """/added code"""
         # img = Image.fromarray(img)
         # img.show()
