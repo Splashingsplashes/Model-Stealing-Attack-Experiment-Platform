@@ -78,9 +78,7 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
                                 std=[0.229, 0.224, 0.225])
 
     for batch_idx, (inputs, targets) in enumerate(train_loader):
-        code.interact(local=dict(globals(), **locals()))
         inputs[0] = trfm(inputs[0])
-        targets[0] = trfm(targets[0])
 
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
