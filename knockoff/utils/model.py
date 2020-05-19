@@ -77,9 +77,9 @@ def train_step(model, train_loader, criterion, optimizer, epoch, device, log_int
     trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                 std=[0.229, 0.224, 0.225])
     for batch_idx, (inputs, targets) in enumerate(train_loader):
-
-        inputs = trfm(inputs)
-        targets = trfm(targets)
+        for i in batch_idx:
+            inputs[i] = trfm(inputs[i])
+            targets[i] = trfm(targets[i])
 
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
