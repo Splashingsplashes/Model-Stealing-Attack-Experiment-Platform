@@ -208,7 +208,7 @@ class AdaptiveAdversary(object):
             print('action = ' + str(action))
             code.interact(local=dict(globals(), **locals()))
         sampled_x_n = trfm(x[rnd_idx])
-        return x[rnd_idx], path[rnd_idx]
+        return x[rnd_idx].unsqueeze(0), path[rnd_idx]
 
     def _reward(self, target, output, n):
         if self.reward == 'cert':
