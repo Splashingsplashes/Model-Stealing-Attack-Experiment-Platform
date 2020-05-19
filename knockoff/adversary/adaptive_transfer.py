@@ -132,7 +132,7 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
 
                 selected_x.append((sampled_x_n[0], y_output.cpu().squeeze().detach()))
-
+                code.interact(local=dict(globals(), **locals()))
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
                 # Compute rewards
                 reward = self._reward(y_output.detach(), y_hat.detach().cpu(), iterate)
