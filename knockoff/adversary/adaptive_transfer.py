@@ -104,7 +104,7 @@ class AdaptiveAdversary(object):
                 print(sampled_x_n)
                 sampled_x_n = sampled_x_n.to(self.device)
 
-                y_output = self.blackbox(sampled_x_n)
+                y_output = self.blackbox(sampled_x_n[0])
                 # code.interact(local=dict(globals(), **locals()))
 
                 # fake_label = np.argmax(y_output, axis=1)
@@ -216,7 +216,7 @@ class AdaptiveAdversary(object):
         sampled_x_n = trfm(x[rnd_idx])
         print(x[rnd_idx])
         print(sampled_x_n)
-        return x[rnd_idx].unsqueeze(0), path[rnd_idx]
+        return x[rnd_idx], path[rnd_idx]
 
     def _reward(self, target, output, n):
         if self.reward == 'cert':
