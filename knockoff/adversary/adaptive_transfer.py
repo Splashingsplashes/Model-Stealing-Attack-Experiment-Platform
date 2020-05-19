@@ -200,6 +200,7 @@ class AdaptiveAdversary(object):
             rnd_idx = np.random.choice(len(x))
 
             img = transforms.ToPILImage()(x[rnd_idx]).convert('RGB')
+            print(path[rnd_idx])
             code.interact(local=dict(globals(), **locals()))
             img.save("tensor_original.bmp")
 
