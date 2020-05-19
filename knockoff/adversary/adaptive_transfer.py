@@ -194,7 +194,7 @@ class AdaptiveAdversary(object):
 
                 if self.queryset.targets[idx] == action:
                     tensor = queryset[idx][0]
-                    tensor = tensor.unsqueeze(0)
+                    # tensor = tensor.unsqueeze(0)
                     x.append(tensor)
                     path.append(queryset.samples[idx])
 
