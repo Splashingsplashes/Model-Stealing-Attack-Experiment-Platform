@@ -15,7 +15,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torch import optim
 from torchvision.datasets.folder import ImageFolder, IMG_EXTENSIONS, default_loader
-
+from torchvision import transforms
 import knockoff.config as cfg
 import knockoff.utils.model as model_utils
 from knockoff import datasets
@@ -57,7 +57,7 @@ class TransferSetImages(Dataset):
         # img = img[0]
         # img = np.transpose(img)
         """added code"""
-        img = img.astype(np.uint8)
+        img = transforms.ToPILImage()(np.uint8(img*255)).convert('RGB')
         """/added code"""
         # img = Image.fromarray(img)
         # img.show()
