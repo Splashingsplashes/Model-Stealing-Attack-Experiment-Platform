@@ -121,8 +121,8 @@ class AdaptiveAdversary(object):
                 self.model.eval()
                 y_hat = self.model(sampled_x_n)
 
-                sampled_x = sampled_x.cpu().numpy()
-                sampled_x = np.rollaxis(sampled_x, 0, 3)
+                # sampled_x = sampled_x.cpu().numpy()
+                # sampled_x = np.rollaxis(sampled_x, 0, 3)
 
                 # img = transforms.ToPILImage()(np.uint8(sampled_x*255)).convert('RGB')
                 # img.save('rollaxis.bmp')
