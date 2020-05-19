@@ -97,9 +97,14 @@ class AdaptiveAdversary(object):
                 sampled_x, path = self._sample_data(self.queryset, action)
                 # Query the victim classifier
                 """to cuda"""
-                sampled_x = sampled_x.to(self.device)
+                trfm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+                sampled_x_n = trfm(sampled_x)
+                print(sampled_x)
+                print(sampled_x_n)
+                sampled_x_n = sampled_x_n.to(self.device)
 
-                y_output = self.blackbox(sampled_x)
+                y_output = self.blackbox(sampled_x_n)
                 # code.interact(local=dict(globals(), **locals()))
 
                 # fake_label = np.argmax(y_output, axis=1)
@@ -114,18 +119,17 @@ class AdaptiveAdversary(object):
                 criterion = model_utils.soft_cross_entropy
 
                 y_output = y_output.to(self.device)
-                self.train(self.model, optimizer, criterion, sampled_x, y_output)
+                self.train(self.model, optimizer, criterion, sampled_x_n, y_output)
 
                 # Test new labels
                 self.model.eval()
-                y_hat = self.model(sampled_x)
+                y_hat = self.model(sampled_x_n)
 
                 sampled_x = sampled_x.cpu().numpy()[0]
-                print(sampled_x[0][0])
+                # print(sampled_x[0][0])
                 # code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
-                sampled_x = sampled_x.astype("float16")
                 # img = transforms.ToPILImage()(np.uint8(sampled_x*255)).convert('RGB')
                 # img.save('rollaxis.bmp')
 
