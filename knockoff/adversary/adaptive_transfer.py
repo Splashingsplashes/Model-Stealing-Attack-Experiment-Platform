@@ -124,7 +124,7 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 # sampled_x = np.transpose(sampled_x)
                 sampled_x = np.rollaxis(sampled_x, 0, 3)
-                print(sampled_x)
+                print(sampled_x[0][0][0])
                 # img = transforms.ToPILImage()(sampled_x).convert('RGB')
                 # img.save('rollaxis.bmp')
 
@@ -203,7 +203,7 @@ class AdaptiveAdversary(object):
             img.save("tensor_original.bmp")
             print(path[rnd_idx])
             # code.interact(local=dict(globals(), **locals()))
-            print(x[rnd_idx])
+            print(x[rnd_idx][0][0][0])
 
         except:
             print('action = ' + str(action))
