@@ -131,7 +131,7 @@ class AdaptiveAdversary(object):
                 # plt.savefig('rollaxis.png')
                 # code.interact(local=dict(globals(), **locals()))
 
-                selected_x.append((sampled_x_n, y_output.cpu().squeeze().detach()))
+                selected_x.append((sampled_x_n[0], y_output.cpu().squeeze().detach()))
 
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
                 # Compute rewards
