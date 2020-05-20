@@ -27,16 +27,20 @@ __maintainer__ = "Tribhuvanesh Orekondy"
 __email__ = "orekondy@mpi-inf.mpg.de"
 __status__ = "Development"
 
-
 def samples_to_transferset(samples, budget=None, transform=None, target_transform=None):
     # Images are either stored as paths, or numpy arrays
     sample_x = samples[0][0]
     assert budget <= len(samples), 'Required {} samples > Found {} samples'.format(budget, len(samples))
 
     if isinstance(sample_x, str):
+        print("Setting up transferset by path")
         return TransferSetImagePaths(samples[:budget], transform=transform, target_transform=target_transform)
     elif isinstance(sample_x, np.ndarray):
-        return TransferSetImages(samples[:budget], transform=transform, target_transform=target_transform)
+        print("Setting up transferset by np array")
+        return TransferSetImages(samples[:budget], transform=None, target_transform=target_transform)
+    elif isinstance(sample_x, torch.Tensor):
+        print("Setting up transferset by tensor")
+        return TransferSetImages(samples[:budget], transform=None, target_transform=target_transform)
     else:
         raise ValueError('type(x_i) ({}) not recognized. Supported types = (str, np.ndarray)'.format(type(sample_x)))
 
