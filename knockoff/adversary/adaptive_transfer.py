@@ -286,6 +286,9 @@ class AdaptiveAdversary(object):
 
         #IBM used np.mean()
 
+        print(reward)
+
+
         return np.sum(reward)
 
 

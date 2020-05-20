@@ -150,7 +150,7 @@ class JacobianAdversary(object):
                 """Update H function"""
                 for a in range(self.num_actions):
                     if a != action:
-                        h_func[a] = h_func[a] - 1.0 / learning_rate[action] * (reward - avg_reward) * probs[a]
+                        h_func[a] = h_func[a] + 1.0 / learning_rate[action] * (reward - avg_reward) * probs[a]
                     else:
                         h_func[a] = h_func[a] + 1.0 / learning_rate[action] * (reward - avg_reward) * (1 - probs[a])
 
