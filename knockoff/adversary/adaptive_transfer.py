@@ -159,7 +159,7 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
                 # print(set(h_func))
-                print(np.partition(probs, -2)[-2:])
+                print(np.partition(probs, -10)[-10:])
                 # print(class_count)
                 # code.interact(local=dict(globals(), **locals()))
                 # Train the thieved classifier the final time???
