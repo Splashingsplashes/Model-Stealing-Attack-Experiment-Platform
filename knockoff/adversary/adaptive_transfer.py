@@ -159,6 +159,7 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
                 print(h_func)
+                print(set(h_func))
                 print(class_count)
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
