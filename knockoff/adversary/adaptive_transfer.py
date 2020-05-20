@@ -158,6 +158,7 @@ class AdaptiveAdversary(object):
                 probs = aux_exp / np.sum(aux_exp)
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
+                print(h_func)
                 print(class_count)
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
@@ -285,9 +286,6 @@ class AdaptiveAdversary(object):
             reward = [max(min(r, 1), 0) for r in reward]
 
         #IBM used np.mean()
-
-        print(reward)
-
 
         return np.sum(reward)
 
