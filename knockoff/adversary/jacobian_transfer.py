@@ -159,7 +159,7 @@ class JacobianAdversary(object):
                 probs = aux_exp / np.sum(aux_exp)
                 pbar.update()
 
-                generated_sample = jacobian_input.detach().cpu().numpy()[0]
+                generated_sample = jacobian_input.detach().cpu()[0]
                 # generated_sample = np.rollaxis(generated_sample, 0, 3)
 
                 """prepare transferset"""
