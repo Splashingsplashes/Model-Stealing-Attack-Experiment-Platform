@@ -160,7 +160,7 @@ class JacobianAdversary(object):
                 pbar.update()
 
                 generated_sample = jacobian_input.detach().cpu().numpy()[0]
-                generated_sample = np.rollaxis(generated_sample, 0, 3)
+                # generated_sample = np.rollaxis(generated_sample, 0, 3)
 
                 """prepare transferset"""
                 selected_x.append((generated_sample, jacobian_output.cpu().squeeze().detach()))
