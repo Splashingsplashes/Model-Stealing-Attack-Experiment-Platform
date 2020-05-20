@@ -158,10 +158,10 @@ class AdaptiveAdversary(object):
                 probs = aux_exp / np.sum(aux_exp)
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
-                print(set(h_func))
-                print(probs)
-                print(class_count)
-                code.interact(local=dict(globals(), **locals()))
+                # print(set(h_func))
+                print(np.partition(probs, -2)[-2:])
+                # print(class_count)
+                # code.interact(local=dict(globals(), **locals()))
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
 
