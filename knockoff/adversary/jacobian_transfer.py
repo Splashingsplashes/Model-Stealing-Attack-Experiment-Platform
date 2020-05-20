@@ -175,7 +175,7 @@ class JacobianAdversary(object):
 
         print(f"Original variance (from f'): {originalVar/budget:.10f} ｜ Jacobian Variance (from f): {jacobianVar/budget:.10f} | Adversarial Variance (for training f'): {adversarialVar/budget:.10f}")
 
-
+        print(learning_rate)
         return selected_x
 
     def train(self, model, optimizer, criterion, sampled_x, y_output):
