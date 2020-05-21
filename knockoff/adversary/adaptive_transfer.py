@@ -162,7 +162,7 @@ class AdaptiveAdversary(object):
                 # for i in range(len(probs)):
                 #     probs[i] = np.exp(h_func[i])/(np.sum(h_func)-h_func[i])
 
-                code.interact(local=dict(globals(), **locals()))
+                # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
                 # print(set(h_func))
                 if max(probs) > 0.9:
