@@ -160,6 +160,7 @@ class JacobianAdversary(object):
                 pbar.update()
                 if max(probs) > 0.9:
                     code.interact(local=dict(globals(), **locals()))
+                print(probs[action])
                 print(np.partition(probs, -10)[-10:])
                 print(set(list(learning_rate)))
 
