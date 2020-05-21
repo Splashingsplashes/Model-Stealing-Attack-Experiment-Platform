@@ -156,11 +156,11 @@ class AdaptiveAdversary(object):
                 avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
 
                 # Update probs
-                # aux_exp = np.exp(h_func)
-                # probs = aux_exp / np.sum(aux_exp)
-
-                for i in range(len(probs)):
-                    probs[i] = np.exp(h_func[i])/(np.sum(h_func)-h_func[i])
+                aux_exp = np.exp(h_func)
+                probs = aux_exp / np.sum(aux_exp)
+                #
+                # for i in range(len(probs)):
+                #     probs[i] = np.exp(h_func[i])/(np.sum(h_func)-h_func[i])
 
                 code.interact(local=dict(globals(), **locals()))
                 pbar.update()
