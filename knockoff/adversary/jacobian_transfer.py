@@ -283,7 +283,7 @@ class JacobianAdversary(object):
             reward = [max(min(r, 1), 0) for r in reward]
 
         #IBM used np.mean()
-
+        print(reward)
         return np.sum(reward)
 
     def printStats(self, output, label):
