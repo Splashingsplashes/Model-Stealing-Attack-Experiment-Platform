@@ -159,6 +159,8 @@ class AdaptiveAdversary(object):
                 # code.interact(local=dict(globals(), **locals()))
                 pbar.update()
                 # print(set(h_func))
+                if max(probs) > 0.9:
+                    code.interact(local=dict(globals(), **locals()))
                 print(np.partition(probs, -10)[-10:])
                 print(set(class_count))
                 # code.interact(local=dict(globals(), **locals()))
