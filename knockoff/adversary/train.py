@@ -141,6 +141,8 @@ def main():
     # Attacker's defense
     parser.add_argument('--argmaxed', action='store_true', help='Only consider argmax labels', default=False)
     parser.add_argument('--optimizer_choice', type=str, help='Optimizer', default='sgdm', choices=('sgd', 'sgdm', 'adam', 'adagrad'))
+    parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
+
     args = parser.parse_args()
     params = vars(args)
 
@@ -154,7 +156,11 @@ def main():
     model_dir = params['model_dir']+"-"+params["policy"]
 
     # ----------- Set up transferset
-    transferset_path = osp.join(model_dir, 'transferset.pickle')
+    defense = params['defense']
+    if defense:
+        transferset_path = osp.join(model_dir, 'transferset-'+defense+'.pickle')
+    else:
+        transferset_path = osp.join(model_dir, 'transferset.pickle')
     with open(transferset_path, 'rb') as rf:
         transferset_samples = pickle.load(rf)
     num_classes = transferset_samples[0][1].size(0)

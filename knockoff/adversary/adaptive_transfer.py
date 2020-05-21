@@ -326,7 +326,12 @@ def main():
 
     out_path = params['out_dir']
     knockoff_utils.create_dir(out_path+"-adaptive")
-    transfer_out_path = osp.join(out_path+"-adaptive", 'transferset.pickle')
+
+    defense = params['defense']
+    if defense:
+        transfer_out_path = osp.join(out_path + "-adaptive", 'transferset-'+defense+'.pickle')
+    else:
+        transfer_out_path = osp.join(out_path+"-adaptive", 'transferset.pickle')
 
     torch.manual_seed(cfg.DEFAULT_SEED)
     if params['device_id'] >= 0:
@@ -349,7 +354,6 @@ def main():
     # code.interact(local=dict(globals(), **locals()))
     # ----------- Initialize blackbox
     blackbox_dir = params['victim_model_dir']
-    defense = params['defense']
     blackbox = Blackbox.from_modeldir(blackbox_dir, defense, device)
 
     # ----------- Initialize Knockoff Nets
