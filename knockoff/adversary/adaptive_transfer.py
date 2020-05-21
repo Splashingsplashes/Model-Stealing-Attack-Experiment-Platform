@@ -135,7 +135,7 @@ class AdaptiveAdversary(object):
                 pathCollection.append((path[0], y_output.detach().cpu().squeeze()))
                 # Compute rewards
                 reward = self._reward(y_output.detach(), y_hat.detach().cpu(), iterate)
-                avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
+
 
                 # Update learning rate
                 learning_rate[action] += 1
@@ -152,6 +152,8 @@ class AdaptiveAdversary(object):
                         h_func[a] = h_func[a] + (1.0 / learning_rate[action]) * (reward - avg_reward) * probs[a]
                     else:
                         h_func[a] = h_func[a] + (1.0 / learning_rate[action]) * (reward - avg_reward) * (1 - probs[a])
+
+                avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
 
                 # Update probs
                 # aux_exp = np.exp(h_func)
