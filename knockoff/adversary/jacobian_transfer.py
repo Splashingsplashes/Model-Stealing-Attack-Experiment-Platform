@@ -405,6 +405,7 @@ class JacobianAdversary(object):
 
                 """prepare transferset"""
                 selected_x.append((generated_sample, jacobian_output.cpu().squeeze().detach()))
+                pbar.update()
                 # Train the thieved classifier the final time???
             # model_utils.train_model(transferset)
 
