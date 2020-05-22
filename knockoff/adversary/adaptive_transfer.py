@@ -74,6 +74,7 @@ class AdaptiveAdversary(object):
 
     def get_transferset(self, budget):
 
+        np.random.seed(0)
         # Implement the bandit gradients algorithm
         h_func = np.zeros(self.num_actions)
         learning_rate = np.zeros(self.num_actions)
