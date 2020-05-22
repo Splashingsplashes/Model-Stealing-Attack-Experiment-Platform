@@ -448,7 +448,7 @@ def main():
     parser.add_argument('--pretrained', type=str, help='Use pretrained network', default=None)
     parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
     parser.add_argument('--topk', type=int, help='The top k number of probabilities to retain', default=None)
-    parser.add_argument('--adaptive', type=int, help='Whether to sample samples adaptively', choices=['True','False'],default=False)
+    parser.add_argument('--adaptive', help='Whether to sample samples adaptively', choices=['True','False'], default=False,type=bool)
 
     args = parser.parse_args()
     params = vars(args)
