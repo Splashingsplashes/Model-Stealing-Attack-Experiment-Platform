@@ -150,7 +150,10 @@ def main():
     # ----------- Initialize adversary
     batch_size = params['batch_size']
     nworkers = params['nworkers']
-    transfer_out_path = osp.join(out_path, 'transferset.pickle')
+    if defense:
+        transfer_out_path = osp.join(out_path, 'transferset-'+defense+'.pickle')
+    else:
+        transfer_out_path = osp.join(out_path, 'transferset.pickle')
     adversary = RandomAdversary(blackbox, queryset, batch_size=batch_size)
 
     print('=> constructing transfer set...')
