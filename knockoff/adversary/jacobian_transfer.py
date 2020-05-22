@@ -393,12 +393,11 @@ class JacobianAdversary(object):
                 # """Update probs"""
                 # aux_exp = np.exp(h_func)
                 # probs = aux_exp / np.sum(aux_exp)
-                # pbar.update()
-                # if max(probs) > 0.9:
-                #     code.interact(local=dict(globals(), **locals()))
-                # print(probs[action])
-                # print(np.partition(probs, -10)[-10:])
-                # print(set(list(learning_rate)))
+
+                if max(probs) > 0.9:
+                    code.interact(local=dict(globals(), **locals()))
+                print(np.partition(probs, -3)[-3:])
+                print(set(list(learning_rate)))
 
                 generated_sample = jacobian_input.detach().cpu()[0]
                 # generated_sample = np.rollaxis(generated_sample, 0, 3)
