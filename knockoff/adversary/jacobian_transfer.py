@@ -381,7 +381,7 @@ class JacobianAdversary(object):
                 # avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
                 #
                 # """Update learning rate"""
-                # learning_rate[action] += 1
+                learning_rate[action] += 1
                 #
                 # """Update H function"""
                 # for a in range(self.num_actions):
