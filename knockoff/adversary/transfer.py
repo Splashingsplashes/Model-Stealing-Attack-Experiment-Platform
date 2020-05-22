@@ -72,20 +72,20 @@ class RandomAdversary(object):
                 x_t = torch.stack([self.queryset[i][0] for i in idxs]).to(self.blackbox.device)
                 y_t = self.blackbox(x_t)
                 y_t = y_t.cpu()
-                if hasattr(self.queryset, 'samples'):
-                    # Any DatasetFolder (or subclass) has this attribute
-                    # Saving image paths are space-efficient
-                    img_t = [self.queryset.samples[i][0] for i in idxs]  # Image paths
-                else:
-                    # Otherwise, store the image itself
-                    # But, we need to store the non-transformed version
-                    img_t = [self.queryset.data[i] for i in idxs]
-                    if isinstance(self.queryset.data[0], torch.Tensor):
-                        img_t = [x.numpy() for x in img_t]
+                # if hasattr(self.queryset, 'samples'):
+                #     # Any DatasetFolder (or subclass) has this attribute
+                #     # Saving image paths are space-efficient
+                #     img_t = [self.queryset.samples[i][0] for i in idxs]  # Image paths
+                # else:
+                #     # Otherwise, store the image itself
+                #     # But, we need to store the non-transformed version
+                #     img_t = [self.queryset.data[i] for i in idxs]
+                #     if isinstance(self.queryset.data[0], torch.Tensor):
+                #         img_t = [x.numpy() for x in img_t]
 
                 for i in range(x_t.size(0)):
-                    img_t_i = img_t[i].squeeze() if isinstance(img_t[i], np.ndarray) else img_t[i]
-                    self.transferset.append((img_t_i, y_t[i].detach().cpu().squeeze()))
+                    # img_t_i = img_t[i].squeeze() if isinstance(img_t[i], np.ndarray) else img_t[i]
+                    self.transferset.append((x_t[i], y_t[i].detach().cpu().squeeze()))
 
                 pbar.update(x_t.size(0))
 
