@@ -45,7 +45,6 @@ class JacobianAdversary(object):
         self.eps = eps
         self.num_classes = len(set(self.queryset.targets))
         self.num_actions = len(set(self.queryset.targets))
-
         self.reward = reward
         self.transferset = []  # List of tuples [(img_path, output_probs)]
         self.model = model
@@ -70,7 +69,7 @@ class JacobianAdversary(object):
     #     self.idx_set = set(range(len(self.queryset)))
     #     self.transferset = []
 
-    def get_transferset(self, budget):
+    def get_transferset_adaptive(self, budget):
 
         # Implement the bandit gradients algorithm
         h_func = np.zeros(self.num_actions)
@@ -309,6 +308,118 @@ class JacobianAdversary(object):
 
         return np.var(top5)
 
+    def get_transferset(self, budget):
+
+        # Implement the bandit gradients algorithm
+        h_func = np.zeros(self.num_actions)
+        learning_rate = np.zeros(self.num_actions)
+        probs = np.ones(self.num_actions) / self.num_actions
+        selected_x = []
+        queried_labels = []
+
+        avg_reward = 0
+        actionListSelected = []
+        pathCollection = []
+
+        optimizer = optim.SGD(self.model.parameters(), lr=0.01, momentum=0.5, weight_decay=5e-4)
+        criterion = model_utils.soft_cross_entropy
+
+        originalVar = 0
+        jacobianVar = 0
+        adversarialVar = 0
+
+        with tqdm(total=budget) as pbar:
+            for iterate in range(1, budget + 1):
+                # Sample an action
+                probs = np.ones(self.num_actions) / self.num_actions
+                action = np.random.choice(np.arange(0, self.num_actions), p=probs)
+                actionListSelected.append(action)
+                # Sample data to attack
+                sampled_x, path = self._sample_data(self.queryset, action)
+
+                # """prepare inputs to MxNx3"""
+                # sampled_x = np.rollaxis(sampled_x.cpu().numpy()[0], 0, 3)
+                sampled_x = torch.tensor(sampled_x).to(self.device)
+
+                """prepare one hot encoding target tensor input"""
+                target = np.zeros(256)
+                target[action - 1] = 1
+                # make target batch size = 1 by encapsulate it with a list
+                target = torch.tensor([target]).to(self.device)
+
+                """Query the local adversarial model"""
+                self.model.eval()
+                y_output = self.model(sampled_x)
+                originalVar += self.printStats(y_output, action)
+
+                """generate adversarial sample"""
+                if self.algo == 'jsma':
+                    # modification needed: target class != action
+                    jacobian_input = jacobian.jsma(self.model, sampled_x, action).to(self.device)
+                elif self.algo == 'fgsm':
+                    jacobian_input = jacobian.fgsm(sampled_x, action, self.model, criterion, self.eps).to(self.device)
+                else:
+                    raise NotImplementedError
+
+                jacobian_output = self.blackbox(jacobian_input)
+
+                jacobianVar += self.printStats(jacobian_output, action)
+
+                """Train the thieved classifier"""
+                """to cuda"""
+                # model = self.model.to('cuda')
+                self.model.train()
+                self.train(self.model, optimizer, criterion, jacobian_input, jacobian_output)
+                #
+                # """training knockoff nets for sampled data"""
+                # # Test new labels
+                # y_hat = self.model(jacobian_input)
+                # adversarialVar += self.printStats(y_hat, action)
+                #
+                # """Compute rewards"""
+                # reward = self._reward(jacobian_output.detach(), y_hat, iterate)
+                # avg_reward = avg_reward + (1.0 / iterate) * (reward - avg_reward)
+                #
+                # """Update learning rate"""
+                # learning_rate[action] += 1
+                #
+                # """Update H function"""
+                # for a in range(self.num_actions):
+                #     if a != action:
+                #         h_func[a] = h_func[a] + 1.0 / learning_rate[action] * (reward - avg_reward) * probs[a]
+                #     else:
+                #         h_func[a] = h_func[a] + 1.0 / learning_rate[action] * (reward - avg_reward) * (1 - probs[a])
+                #
+                # """Update probs"""
+                # aux_exp = np.exp(h_func)
+                # probs = aux_exp / np.sum(aux_exp)
+                # pbar.update()
+                # if max(probs) > 0.9:
+                #     code.interact(local=dict(globals(), **locals()))
+                # print(probs[action])
+                # print(np.partition(probs, -10)[-10:])
+                # print(set(list(learning_rate)))
+
+                generated_sample = jacobian_input.detach().cpu()[0]
+                # generated_sample = np.rollaxis(generated_sample, 0, 3)
+
+                """prepare transferset"""
+                selected_x.append((generated_sample, jacobian_output.cpu().squeeze().detach()))
+                # Train the thieved classifier the final time???
+            # model_utils.train_model(transferset)
+
+            #
+            # return thieved_classifier
+        # print(probs)
+
+        # code.interact(local=dict(globals(), **locals()))
+
+        print(
+            f"Original variance (from f'): {originalVar / budget:.10f} ｜ Jacobian Variance (from f): {jacobianVar / budget:.10f} | Adversarial Variance (for training f'): {adversarialVar / budget:.10f}")
+
+        print(learning_rate)
+        return selected_x
+
 def main():
     parser = argparse.ArgumentParser(description='Construct apaptive transfer set')
     parser.add_argument('victim_model_dir', metavar='PATH', type=str,
@@ -337,7 +448,7 @@ def main():
     parser.add_argument('--pretrained', type=str, help='Use pretrained network', default=None)
     parser.add_argument('--defense', type=str, help='Defense strategy used by victim side', default=None)
     parser.add_argument('--topk', type=int, help='The top k number of probabilities to retain', default=None)
-
+    parser.add_argument('--adaptive', type=int, help='Whether to sample samples adaptively', choices=['True','False'],default=False)
 
     args = parser.parse_args()
     params = vars(args)
@@ -378,10 +489,14 @@ def main():
 
     algo = params['algo']
     eps = params['eps']
-    adversary = JacobianAdversary(queryset, blackbox, model, algo, eps, device, reward = 'all')
+    adaptive = params["adaptive"]
+    adversary = JacobianAdversary(queryset, blackbox, model, algo, eps, device,reward = 'all')
 
     print('=> constructing transfer set...')
-    transferset = adversary.get_transferset(params['budget'])
+    if adaptive:
+        transferset = adversary.get_transferset_adaptive(params['budget'])
+    else:
+        transferset = adversary.get_transferset(params['budget'])
     if defense:
         transfer_out_path = osp.join(out_path, algo+'-'+defense+'-transferset.pickle')
     else:
