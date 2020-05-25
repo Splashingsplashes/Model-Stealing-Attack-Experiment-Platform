@@ -250,8 +250,8 @@ class AdaptiveAdversary(object):
         # or try target[k]
         reward = 0
         for k in range(self.num_classes):
-            reward += np.maximum(0, self.y_avg[k] - prev_avg[k])
-
+            # reward += np.maximum(0, self.y_avg[k] - prev_avg[k])
+            reward += np.maximum(0, target[0][k] - self.y_avg[k])
         return reward
 
     def _reward_loss(self, target, output):
